@@ -1,4 +1,4 @@
-# studio-patcher
+# studio-patcher (VERY WIP)
 it patches studio or something
 
 # photograph
