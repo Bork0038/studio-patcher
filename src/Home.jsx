@@ -12,8 +12,7 @@ import {
 } from "rsuite";
 
 import { Search, Global } from "@rsuite/icons";
-import { dialog } from "@tauri-apps/api";
-import { invoke } from "@tauri-apps/api";
+import { dialog, invoke, process, window } from "@tauri-apps/api";
 
 import "./Home.css";
 import "rsuite/styles/index.less";
@@ -22,7 +21,7 @@ import restoreIcon from './assets/restore.png';
 import closeIcon from './assets/close.png';
 import maxIcon from './assets/max.png';
 import minIcon from './assets/min.png';
-// import icon from "./assets/icon.png";
+import icon from "./assets/icon.png";
 
 class App extends Component {
 	
@@ -47,7 +46,10 @@ class App extends Component {
 		}
 
 		this.openFileDialog = this.openFileDialog.bind( this );
+		this.maximize  		= this.maximize.bind( this );
+		this.minimize		= this.minimize.bind( this );
 		this.submit			= this.submit.bind( this );
+		this.close 			= this.close.bind( this );
 	}
 
 	async submit() {
@@ -100,6 +102,26 @@ class App extends Component {
 		});
 	}
 
+	async close() {
+		await process.exit();
+	}
+
+	async minimize() {
+		await window
+			.getCurrent()
+			.minimize();
+	}
+
+	async maximize() {
+		const currentWindow = window.getCurrent();
+		const isMaximized   = await currentWindow.isMaximized();
+
+		document.getElementById('max-png').src = isMaximized ? maxIcon : restoreIcon;
+		isMaximized ? currentWindow.unmaximize() : currentWindow.maximize();
+
+		this.setState();
+	}
+
 	render() {
 		return (
 			<CustomProvider id="wrapper" theme="dark">
@@ -107,21 +129,21 @@ class App extends Component {
 					<p id='title-text'>Studio Patcher</p>
 					<div id='title-left'>
 						<div id='icon-wrapper'>
-							{/* <img id='icon' src={icon} /> */}
+							<img id='icon' src={icon} />
 						</div>
 					</div>
 					<div id='title-right'>
 						<div id='button-wrapper'>
-							<button id='min'><img id ='min-png' src={minIcon}/></button>
-							<button id='max'><img id='max-png' src={maxIcon}/></button>
-							<button id='close'><img id='close-png' src={closeIcon}/></button>
+							<button id='min'><img id ='min-png' src={minIcon} onClick={this.minimize}/></button>
+							<button id='max'><img id='max-png' src={maxIcon} onClick={this.maximize}/></button>
+							<button id='close'><img id='close-png' src={closeIcon} onClick={this.close}/></button>
 						</div>
 					</div>
 				</div>
 				<div id='drag' data-tauri-drag-region></div>
 				<div id="main">
 					<Form id="content" layout="vertical" fluid>
-						<Form.Group controlId="version">
+						<Form.Group controlId="version" id="version-group">
 							<Form.ControlLabel>Roblox Executable</Form.ControlLabel>
 							<InputGroup>
 								<InputGroup.Addon>
@@ -131,9 +153,9 @@ class App extends Component {
 								<Button id="select" onClick={this.openFileDialog}>Select</Button>
 							</InputGroup>
 						</Form.Group>
-						<Form.Group controlId="patches">
+						<Form.Group controlId="patches" id="patches-group">
 							<Form.ControlLabel>Patches</Form.ControlLabel>
-							<Panel bordered bodyFill shaded>
+							<Panel bordered bodyFill shaded id="patches-panel">
 								<div id="patches-wrapper">
 									{
 										this.state.patches.map(patch => {
@@ -149,10 +171,10 @@ class App extends Component {
 								
 							</Panel>
 						</Form.Group>
-						<Form.Group>
+						<Form.Group id="install-group">
 							<Button onClick={this.submit}>Install Patches</Button>
 						</Form.Group>
-						<Form.Group>
+						<Form.Group id="remove-group">
 							<Form.ControlLabel>Remove Patches</Form.ControlLabel>
 							<InputGroup>
 								<InputGroup.Addon>

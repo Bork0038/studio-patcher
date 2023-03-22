@@ -51,8 +51,6 @@
         "title": "studio-patcher",
         "minHeight": 630,
         "minWidth": 530,
-        "maxHeight": 630,
-        "maxWidth": 2147483647,
         "width": 800,
         "height": 630,
         "decorations": false

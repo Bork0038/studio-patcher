@@ -9,7 +9,7 @@ use super::scanner::*;
 
 pub struct Patch {
     name: String,
-    patch: fn( data: &mut Box<Vec<u8>> ) -> Result<(), String>
+    patch: fn( data: &mut Box<Vec<u8>> ) -> Result<(), &str>
 }
 
 pub fn get_patches() -> Vec<Patch> {
