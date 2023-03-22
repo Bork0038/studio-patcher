@@ -7,7 +7,7 @@ It patches studio or something.
 - [building from source](#building-from-source)
   - [dependencies](#dependencies)
   - [running program](#running-program)
-  - [buidling installer](#buidling-installer)
+  - [building installer](#building-installer)
 - [patches](#patches)
   - [internal studio](#internal-studio)
   - [extended explorer](#extended-explorer)
@@ -29,7 +29,7 @@ Run the installer from the releases page.
 
 2. ```cargo tauri dev```
 
-## buidling installer
+## building installer
 The installer will be written to /src-tauri/target/release/bundle
 1. ```pnpm i```
 2. ```cargo tauri build```
