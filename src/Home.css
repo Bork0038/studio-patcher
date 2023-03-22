@@ -185,3 +185,37 @@ body, html, #root, #wrapper {
 #patches-panel {
 	height: calc(100% - 24px);
 }
+
+#loading-screen {
+	width: 100%;
+	height: calc(100% - 32px);
+	position: absolute;
+	background-color: rgba(0,0,0,0.7);
+	z-index: 10;
+	visibility: hidden;
+}
+
+#loading-screen-inner {
+	background-color: #202125;
+
+	position: relative;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+
+	width: 200px;
+	height: 150px;
+}
+
+#loading-screen-inner p {
+	width: 100%;
+	text-align: center;
+	vertical-align: middle;
+	height: 50px;
+	line-height: 50px;
+	user-select: none;
+}
+
+#loading-screen-loader {
+	margin-top: 20px;
+}

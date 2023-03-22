@@ -1,6 +1,8 @@
 use super::super::patches;
 use std::fs::OpenOptions;
 use std::io::{ Read, Write };
+use tokio::task::spawn;
+use tauri::Window;
 
 #[derive(serde::Deserialize)]
 pub struct PatchRequest {
@@ -8,7 +10,7 @@ pub struct PatchRequest {
     patches: Vec<String>
 }
 
-#[derive(serde::Serialize)]
+#[derive(serde::Serialize, Clone)]
 pub struct PatchResult {
     success: bool,
     data: String
@@ -32,8 +34,7 @@ impl PatchResult {
 
 }
 
-#[tauri::command]
-pub fn install_patches( patches: PatchRequest ) -> PatchResult {
+pub fn install_patches_internal( patches: PatchRequest ) -> PatchResult {
     let mut data = Box::new( Vec::new() );
 
     let mut file = match OpenOptions::new()
@@ -66,4 +67,15 @@ pub fn install_patches( patches: PatchRequest ) -> PatchResult {
         Ok(_) => PatchResult::success(),
         Err( e ) => PatchResult::error( e.to_string() )
     }
+}
+
+#[tauri::command]
+pub fn install_patches( window: Window, patches: PatchRequest ) {
+    spawn(async move {
+        let res = install_patches_internal( patches );
+
+        window
+            .emit( "installed_patches", res )
+            .unwrap();
+    });
 }

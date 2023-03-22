@@ -4,7 +4,8 @@ mod commands;
 mod patches;
 mod scanner;
 
-fn main() {
+#[tokio::main]
+async fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
             commands::install_patches

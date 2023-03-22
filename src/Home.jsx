@@ -8,11 +8,12 @@ import {
 	Checkbox,
 	Message,
 	toaster,
-	Divider
+	Divider,
+	Loader
 } from "rsuite";
 
 import { Search, Global } from "@rsuite/icons";
-import { dialog, invoke, process, window } from "@tauri-apps/api";
+import { dialog, invoke, process, window, event } from "@tauri-apps/api";
 
 import "./Home.css";
 import "rsuite/styles/index.less";
@@ -61,7 +62,8 @@ class App extends Component {
 			)
 		}
 
-		const form = document.forms[0];
+		const loader = document.getElementById("loading-screen");
+		const form   = document.forms[0];
 
 		const patches = [];
 		for ( let patch of this.state.patches ) {
@@ -70,7 +72,27 @@ class App extends Component {
 			}
 		}
 
-		const res = await invoke(
+		event.once( "installed_patches", eventData => {
+			const { payload } = eventData;
+
+			loader.style.visibility = "hidden";
+			if ( !payload.success ) {
+				return toaster.push(
+					<Message showIcon type="error">
+						Failed to patch studio { payload.data }
+					</Message>
+				)
+			} else {
+				return toaster.push(
+					<Message showIcon type="success">
+						Successfully patched studio
+					</Message>
+				)
+			}
+		})
+
+		loader.style.visibility = "visible";
+		await invoke(
 			"install_patches",
 			{
 				patches: {
@@ -79,14 +101,6 @@ class App extends Component {
 				}
 			}
 		)
-
-		if ( !res.success ) {
-			return toaster.push(
-				<Message showIcon type="error">
-					Failed to patch studio {res.data}
-				</Message>
-			)
-		}
 	}
 
 	async openFileDialog() {
@@ -138,6 +152,12 @@ class App extends Component {
 							<button id='max'><img id='max-png' src={maxIcon} onClick={this.maximize}/></button>
 							<button id='close'><img id='close-png' src={closeIcon} onClick={this.close}/></button>
 						</div>
+					</div>
+				</div>
+				<div id="loading-screen">
+					<div id="loading-screen-inner">
+						<p>Applying Patches...</p>
+						<Loader center size="lg" id="loading-screen-loader" />
 					</div>
 				</div>
 				<div id='drag' data-tauri-drag-region></div>
