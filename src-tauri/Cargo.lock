@@ -2540,6 +2540,7 @@ dependencies = [
 name = "studio-patcher"
 version = "0.0.0"
 dependencies = [
+ "lazy_static",
  "serde",
  "serde_json",
  "tauri",
