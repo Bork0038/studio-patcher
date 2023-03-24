@@ -1,34 +1,43 @@
-use super::{ Patch, IDAPat, Scanner, patch_segment };
-use std::collections::HashMap;
+use super::{ Patch, IDAPat, Scanner, PatchType, ReplacementPatch, OffsetPatch };
+use lazy_static::lazy_static;
 
-pub struct InternalStudioPatch {}
+pub struct InternalStudioPatch;
+
+lazy_static! {
+    static ref PATCHES: Vec<PatchType> = vec![
+        ReplacementPatch::new(
+            IDAPat::new( "83 CB 04 89 5E 64" ),
+            "RBX::hasInternalPermission",
+            vec![
+                OffsetPatch::new(
+                    vec![ 
+                        0x83, 0xCB, 0x05, 
+                    ],
+                    0
+                )
+            ]
+        )
+    ];
+}
 
 impl InternalStudioPatch {
 
     pub fn new() -> Patch {
         Patch {
-            name: String::from( "internal-studio" ),
+            name: "internal-studio".into(),
             patch: InternalStudioPatch::patch
         }
     }
 
-    pub fn patch( data: &mut Box<Vec<u8>> ) -> Result<(), &str> {
+    pub fn patch( data: &mut Box<Vec<u8>> ) -> Result<(), String> {
         let scanner = Scanner::new( &data );
 
-        let addr = scanner.scan(
-            &IDAPat::new( "83 CB 04 89 5E 64" )
-        ).map_or(
-            Err( "Failed to find ::hasInternalPermission"),
-            | addr | Ok(addr)
-        )?;
-
-        patch_segment(
-            data, 
-            vec![ 
-                0x83, 0xCB, 0x05, 
-            ],
-            addr
-        );
+        for patch in PATCHES.iter() {
+            patch.patch( 
+                &scanner,
+                &mut data.clone() 
+            )?;
+        }
 
         Ok(())
     }

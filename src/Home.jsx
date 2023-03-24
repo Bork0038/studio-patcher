@@ -43,6 +43,11 @@ class App extends Component {
 					title: "Extended Explorer",
 					description: "Shows hidden properties and instances in the Studio explorer"
 				},
+				{
+					name: "disable-telemetry",
+					title: "Disable Telemetry",
+					description: "It disables telemetry "
+				}
 			]
 		}
 
