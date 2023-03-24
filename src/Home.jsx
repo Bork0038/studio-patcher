@@ -36,18 +36,18 @@ class App extends Component {
 				{
 					name: "internal-studio",
 					title: "Internal Studio",
-					description: "Enables Roblox's Internal Studio mode. Gives access to features such as FFlag editor, additional plugins..."
+					description: "Enables Roblox's Internal Studio mode. Gives access to features such as FFlag editor, additional plugins...",
 				},
 				{
 					name: "extended-explorer",
 					title: "Extended Explorer",
-					description: "Shows hidden properties and instances in the Studio explorer"
+					description: "Shows hidden properties and instances in the Studio explorer",
 				},
-				{
-					name: "disable-telemetry",
-					title: "Disable Telemetry",
-					description: "It disables telemetry "
-				}
+				// {
+				// 	name: "disable-telemetry",
+				// 	title: "Disable Telemetry",
+				// 	description: "It disables telemetry "
+				// }
 			]
 		}
 
