@@ -46,4 +46,4 @@ The internal studio patch enables Roblox's Internal Studio mode. It provides acc
 The extend explorer patch shows all hidden properties in the Property View, including hidden and restricted properties.
 
 ### example
-![alt text](https://raw.githubusercontent.com/Bork0038/studio-patcher/main/assets/extended.explorer.png)
+![alt text](https://raw.githubusercontent.com/Bork0038/studio-patcher/main/assets/extended-explorer.png)
