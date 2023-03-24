@@ -1,0 +1,1173 @@
+{
+    "Name": "Dracula v2",
+    "Presets": {
+        "RobloxDefault": {
+            "Default": "#f8f8f2",
+            "Operator": "#f8f8f2",
+            "Number": "#f1fa8c",
+            "String": "#50fa7b",
+            "Comment": "#6272a4",
+            "Keyword": "#ff5555",
+            "Builtin": "#8be9fd",
+            "Method": "#f1fa8c",
+            "Property": "#8be9fd",
+            "Nil": "#f1fa8c",
+            "Bool": "#f1fa8c",
+            "Function": "#ff5555",
+            "Local": "#ff5555",
+            "Self": "#ff5555",
+            "LuauKeyword": "#ff5555",
+            "FunctionName": "#f1fa8c",
+            "TODO": "#bd93f9",
+            "Background": "#282a36",
+            "SelectionText": "#f8f8f2",
+            "SelectionBackground": "#bd93f9",
+            "FindSelectionBackground": "#f1fa8c",
+            "MatchingWordBackground": "#bd93f9",
+            "Warning": "#ffb86c",
+            "Error": "#ff5555",
+            "ActiveLine": "#44475a",
+            "Whitespace": "#282a36",
+            "DebuggerCurrentLine": "#273B4D",
+            "DebuggerErrorLine": "#FD4A4A",
+            "Ruler": "#bd93f9",
+            "Bracket": "#f8f8f2",
+            "MenuPrimaryText": "#f8f8f2",
+            "MenuSecondaryText": "#53566C",
+            "MenuSelectedText": "#f8f8f2",
+            "MenuBackground": "#282A36",
+            "MenuSelectedBackground": "#bd93f9",
+            "MenuScrollbarBackground": "#282a36",
+            "MenuScrollbarHandle": "#f8f8f2",
+            "MenuBorder": "#282a36",
+            "DocViewCodeBackground": "#282a36"
+        },
+        "Extra1": {
+            "Default": "#D4D4D4",
+            "Operator": "#D4D4D4",
+            "Number": "#B5CEA8",
+            "String": "#CE9178",
+            "Comment": "#6A9955",
+            "Keyword": "#C586C0",
+            "Builtin": "#DCDCAA",
+            "Method": "#DCDCAA",
+            "Property": "#9CDCFE",
+            "Nil": "#3189DD",
+            "Bool": "#3189DD",
+            "Function": "#C586C0",
+            "Local": "#C586C0",
+            "Self": "#3189DD",
+            "LuauKeyword": "#569CD6",
+            "FunctionName": "#DCDCAA",
+            "TODO": "#6A9955",
+            "Background": "#1E1E1E",
+            "SelectionText": "#FFFFFF",
+            "SelectionBackground": "#0B5AAF",
+            "FindSelectionBackground": "#8D7600",
+            "MatchingWordBackground": "#663D25",
+            "Warning": "#FF7315",
+            "Error": "#FF0000",
+            "ActiveLine": "#2D3241",
+            "Whitespace": "#555555",
+            "DebuggerCurrentLine": "#2A3C4C",
+            "DebuggerErrorLine": "#4C2A2A",
+            "Ruler": "#666666",
+            "Bracket": "#D4D4D4",
+            "MenuPrimaryText": "#FFFFFF",
+            "MenuSecondaryText": "#666666",
+            "MenuSelectedText": "#FFFFFF",
+            "MenuBackground": "#2E2E2E",
+            "MenuSelectedBackground": "#265AA9",
+            "MenuScrollbarBackground": "#2E2E2E",
+            "MenuScrollbarHandle": "#B3B3B3",
+            "MenuBorder": "#000000",
+            "DocViewCodeBackground": "#424242"
+        },
+        "Extra2": {
+            "Default": "#F7F8F1",
+            "Operator": "#F92472",
+            "Number": "#AE81FF",
+            "String": "#E3DB65",
+            "Comment": "#75715E",
+            "Keyword": "#F92472",
+            "Builtin": "#F7F8F1",
+            "Method": "#71D5EF",
+            "Property": "#F7F8F1",
+            "Nil": "#A370FF",
+            "Bool": "#A370FF",
+            "Function": "#71D5EF",
+            "Local": "#F92472",
+            "Self": "#FD831F",
+            "LuauKeyword": "#F92472",
+            "FunctionName": "#74E500",
+            "TODO": "#75715E",
+            "Background": "#222822",
+            "SelectionText": "#FFFFFF",
+            "SelectionBackground": "#0B5AAF",
+            "FindSelectionBackground": "#8D7600",
+            "MatchingWordBackground": "#555555",
+            "Warning": "#FF7315",
+            "Error": "#FF0000",
+            "ActiveLine": "#37362B",
+            "Whitespace": "#555555",
+            "DebuggerCurrentLine": "#2A3C4C",
+            "DebuggerErrorLine": "#4C2A2A",
+            "Ruler": "#666666",
+            "Bracket": "#F92472",
+            "MenuPrimaryText": "#FFFFFF",
+            "MenuSecondaryText": "#666666",
+            "MenuSelectedText": "#FFFFFF",
+            "MenuBackground": "#2E2E2E",
+            "MenuSelectedBackground": "#265AA9",
+            "MenuScrollbarBackground": "#2E2E2E",
+            "MenuScrollbarHandle": "#B3B3B3",
+            "MenuBorder": "#000000",
+            "DocViewCodeBackground": "#424242"
+        },
+        "Custom": {
+            "Default": "#CCCCCC",
+            "Operator": "#CCCCCC",
+            "Number": "#FFC600",
+            "String": "#ADF195",
+            "Comment": "#666666",
+            "Keyword": "#F86D7C",
+            "Builtin": "#84D6F7",
+            "Method": "#FDFBAC",
+            "Property": "#61A1F1",
+            "Nil": "#FFC600",
+            "Bool": "#FFC600",
+            "Function": "#F86D7C",
+            "Local": "#F86D7C",
+            "Self": "#F86D7C",
+            "LuauKeyword": "#F86D7C",
+            "FunctionName": "#FDFBAC",
+            "TODO": "#666666",
+            "Background": "#252525",
+            "SelectionText": "#FFFFFF",
+            "SelectionBackground": "#0B5AAF",
+            "FindSelectionBackground": "#8D7600",
+            "MatchingWordBackground": "#555555",
+            "Warning": "#FF7315",
+            "Error": "#FF0000",
+            "ActiveLine": "#2D3241",
+            "Whitespace": "#555555",
+            "DebuggerCurrentLine": "#2A3C4C",
+            "DebuggerErrorLine": "#4C2A2A",
+            "Ruler": "#666666",
+            "Bracket": "#CCCCCC",
+            "MenuPrimaryText": "#FFFFFF",
+            "MenuSecondaryText": "#666666",
+            "MenuSelectedText": "#FFFFFF",
+            "MenuBackground": "#2E2E2E",
+            "MenuSelectedBackground": "#265AA9",
+            "MenuScrollbarBackground": "#2E2E2E",
+            "MenuScrollbarHandle": "#B3B3B3",
+            "MenuBorder": "#000000",
+            "DocViewCodeBackground": "#424242"
+        }
+    },
+    "Colors": [{
+            "MainBackground": {
+                "Default": "#282a36"
+            }
+        }, {
+            "Titlebar": {
+                "Default": "#282a36"
+            }
+        }, {
+            "Dropdown": {
+                "Default": "#282a36"
+            }
+        }, {
+            "Tooltip": {
+                "Default": "#282a36"
+            }
+        }, {
+            "Notification": {
+                "Default": "#282a36"
+            }
+        }, {
+            "ScrollBar": {
+                "Default": "#44475a",
+                "Hover": "#4B4D5D",
+                "Pressed": "#4B4D5D",
+                "Disabled": "#6272a4"
+            }
+        }, {
+            "ScrollBarBackground": {
+                "Default": "#282a36"
+            }
+        }, {
+            "TabBar": {
+                "Default": "#282a36"
+            }
+        }, {
+            "Tab": {
+                "Default": "#282a36",
+                "Selected": "#282a36",
+                "Hover": "#303341"
+            }
+        }, {
+            "FilterButtonDefault": {
+                "Default": "#282a36"
+            }
+        }, {
+            "FilterButtonHover": {
+                "Default": "#282a36"
+            }
+        }, {
+            "FilterButtonChecked": {
+                "Default": "#282a36"
+            }
+        }, {
+            "FilterButtonAccent": {
+                "Default": "#282a36"
+            }
+        }, {
+            "FilterButtonBorder": {
+                "Default": "#282a36"
+            }
+        }, {
+            "FilterButtonBorderAlt": {
+                "Default": "#282a36"
+            }
+        }, {
+            "Separator": {
+                "Default": "#44475a"
+            }
+        }, {
+            "RibbonTab": {
+                "Default": "#282a36",
+                "Selected": "#282a36",
+                "Hover": "#282a36"
+            }
+        }, {
+            "RibbonTabTopBar": {
+                "Default": "#8be9fd"
+            }
+        }, {
+            "Button": {
+                "Default": "#282a36",
+                "Pressed": "#44475a",
+                "Selected": "#8be9fd",
+                "Hover": "#44475a"
+            }
+        }, {
+            "MainButton": {
+                "Default": "#8be9fd",
+                "Pressed": "#64A8B7",
+                "Hover": "#6AB2C2"
+            }
+        }, {
+            "RibbonButton": {
+                "Default": "#282a36",
+                "Selected": "#44475a",
+                "Pressed": "#44475a",
+                "Hover": "#282a36"
+            }
+        }, {
+            "ViewPortBackground": {
+                "Default": "#282a36"
+            }
+        }, {
+            "InputFieldBackground": {
+                "Default": "#282a36",
+                "Disabled": "#6272a4",
+                "Hover": "#44475a"
+            }
+        }, {
+            "InputFieldBorder": {
+                "Default": "#282a36",
+                "Hover": "#44475a",
+                "Selected": "#8be9fd",
+                "Disabled": "#6272a4"
+            }
+        }, {
+            "CheckedFieldBackground": {
+                "Default": "#282a36",
+                "Disabled": "#6272a4"
+            }
+        }, {
+            "CheckedFieldBorder": {
+                "Default": "#282a36",
+                "Hover": "#44475a",
+                "Disabled": "#6272a4"
+            }
+        }, {
+            "CheckedFieldIndicator": {
+                "Default": "#8be9fd",
+                "Disabled": "#6272a4"
+            }
+        }, {
+            "Item": {
+                "Default": "#282a36",
+                "Selected": "#8be9fd",
+                "Hover": "#44475a"
+            }
+        }, {
+            "TableItem": {
+                "Default": "#282a36",
+                "Selected": "#8be9fd",
+                "Hover": "#44475a"
+            }
+        }, {
+            "CategoryItem": {
+                "Default": "#282a36"
+            }
+        }, {
+            "AttributeCog": {
+                "Default": "##B3B3AF",
+                "Selected": "##f8f8f2"
+            }
+        }, {
+            "GameSettingsTableItem": {
+                "Default": "#282a36",
+                "Selected": "#8be9fd",
+                "Hover": "#44475a"
+            }
+        }, {
+            "GameSettingsTooltip": {
+                "Default": "#282a36"
+            }
+        }, {
+            "EmulatorBar": {
+                "Default": "#282a36",
+                "Hover": "#44475a"
+            }
+        }, {
+            "EmulatorDropDown": {
+                "Default": "#282a36",
+                "Hover": "#44475a"
+            }
+        }, {
+            "ColorPickerFrame": {
+                "Default": "#282a36"
+            }
+        }, {
+            "CurrentMarker": {
+                "Default": "#282a36",
+                "Selected": "#8be9fd"
+            }
+        }, {
+            "Border": {
+                "Default": "#282a36"
+            }
+        }, {
+          "DropShadow": {
+            "Default": "#FF555500"
+          }
+        }, {
+            "Shadow": {
+                "Default": "#282A3600"
+            }
+        }, {
+            "Light": {
+                "Default": "#44475a"
+            }
+        }, {
+            "Dark": {
+                "Default": "#363948"
+            }
+        }, {
+            "Mid": {
+                "Default": "#363948"
+            }
+        }, {
+            "Midlight": {
+                "Default": "#363948"
+            }
+        }, {
+            "MainText": {
+                "Default": "#f8f8f2",
+                "Disabled": "#6272a4",
+                "Selected": "#f8f8f2",
+                "Hover": "#f8f8f2"
+            }
+        }, {
+            "SubText": {
+                "Default": "#BBBBB7",
+                "Disabled": "#6272a4",
+                "Selected": "#BBBBB7"
+            }
+        }, {
+            "DimmedText": {
+                "Default": "#44475a",
+                "Selected": "#A8A8A5"
+            }
+        }, {
+            "BrightText": {
+                "Default": "#f8f8f2"
+            }
+        }, {
+            "TitlebarText": {
+                "Default": "#f8f8f2",
+                "Disabled": "#6272a4"
+            }
+        }, {
+            "LinkText": {
+                "Default": "#8be9fd"
+            }
+        }, {
+            "WarningText": {
+                "Default": "#ffb86c"
+            }
+        }, {
+            "ErrorText": {
+                "Default": "#ff5555"
+            }
+        }, {
+            "InfoText": {
+                "Default": "#bd93f9"
+            }
+        }, {
+            "SensitiveText": {
+                "Default": "#bd93f9"
+            }
+        }, {
+            "ScriptSideWidget": {
+                "Default": "#282a36"
+            }
+        }, {
+            "DiffFilePathText": {
+                "Default": "#D9D9D5"
+            }
+        }, {
+            "DiffFilePathBackground": {
+                "Default": "#44475a"
+            }
+        }, {
+            "DiffFilePathBorder": {
+                "Default": "#2B2D38"
+            }
+        }, {
+            "DiffTextHunkInfo": {
+                "Default": "#f8f8f2"
+            }
+        }, {
+            "DiffTextNoChange": {
+                "Default": "#f8f8f2"
+            }
+        }, {
+            "DiffTextAddition": {
+                "Default": "#f8f8f2"
+            }
+        }, {
+            "DiffTextDeletion": {
+                "Default": "#f8f8f2"
+            }
+        }, {
+            "DiffTextSeparatorBackground": {
+                "Default": "#44475a"
+            }
+        }, {
+            "DiffTextNoChangeBackground": {
+                "Default": "#292B37"
+            }
+        }, {
+            "DiffTextAdditionBackground": {
+                "Default": "#13391C"
+            }
+        }, {
+            "DiffTextDeletionBackground": {
+                "Default": "#501B1B"
+            }
+        }, {
+            "DiffLineNum": {
+                "Default": "#f8f8f2"
+            }
+        }, {
+            "DiffLineNumSeparatorBackground": {
+                "Default": "#6272a4"
+            }
+        }, {
+            "DiffLineNumNoChangeBackground": {
+                "Default": "#282a36"
+            }
+        }, {
+            "DiffLineNumAdditionBackground": {
+                "Default": "#1A4E26"
+            }
+        }, {
+            "DiffLineNumDeletionBackground": {
+                "Default": "#652323"
+            }
+        }, {
+            "ChatIncomingBgColor": {
+               "Default": "#f8f8f2"
+            }
+        }, {
+            "ChatIncomingTextColor": {
+               "Default": "#44475a"
+            }
+        }, {
+            "ChatOutgoingBgColor": {
+               "Default": "#44475a"
+            }
+        }, {
+            "ChatOutgoingTextColor": {
+               "Default": "#f8f8f2"
+            }
+        }, {
+            "ChatModeratedMessageColor": {
+                "Default": "#ff5555"
+            }
+        }, {
+            "ButtonBorder": {
+               "Default": "#22242E"
+            }
+        }, {
+            "ButtonText": {
+                "Default": "#f8f8f2",
+                "Disabled": "#6272a4",
+                "Selected": "#FFFFFF"
+            }
+        }, {
+            "HeaderSection": {
+                "Default": "#282a36",
+                "Hover": "#44475a",
+                "Pressed": "#485479"
+            }
+        }, {
+            "StatusBar": {
+                "Default": "#282a36"
+            }
+        }, {
+            "DialogButton": {
+                "Default": "#282a36",
+                "Hover": "#44475a",
+                "Selected": "#485479",
+                "Pressed": "#485479"
+            }
+        }, {
+            "DialogButtonText": {
+                "Default": "#f8f8f2",
+                "Disabled": "#6272a4"
+            }
+        },  {
+            "DialogButtonBorder": {
+                "Default": "#282a36"
+            }
+        }, {
+            "DialogMainButton": {
+                "Default": "#8be9fd",
+                "Hover": "#8be9fd",
+                "Selected": "#6AB0BF",
+                "Pressed": "#6AB0BF",
+                "Disabled": "#6272a4"
+            }
+        }, {
+            "DialogMainButtonText": {
+                "Default": "#f8f8f2",
+                "Disabled": "#6272a4"
+            }
+        }, {
+			"InfoBarWarningBackground" : {
+				"Default" : "#f1fa8c"
+			}
+        }, {
+			"InfoBarWarningText" : {
+				"Default" : "#000000"
+			}
+        }, {
+            "ScriptEditorCurrentLine" : {
+                "Default" : "#44475a"
+            }
+        }
+    ],
+  "Paths": [
+    {
+      "AudioImport/ErrorImage": {
+        "Default": ":/images/BulkImport/alert-octagon.png"
+      }
+    },
+    {
+      "AudioImport/ErrorIcon": {
+        "Default": ":/images/BulkImport/alert-octagon-sm.png"
+      }
+    },
+    {
+      "AudioImport/RobuxIcon": {
+        "Default": ":/images/BulkImport/DarkTheme/robux-dark.png"
+      }
+    },
+    {
+      "AudioImport/VolumeError": {
+        "Default": ":/images/BulkImport/volume-error.png"
+      }
+    },
+    {
+      "AudioImport/VolumeImage": {
+        "Default": ":/images/BulkImport/volume.png"
+      }
+    },
+    {
+      "AudioImport/VolumeIcon": {
+        "Default": ":/images/BulkImport/DarkTheme/volume-sm-dark.png"
+      }
+    },
+    {
+      "BulkImport/CloseIcon": {
+        "Default": ":/images/BulkImport/DarkTheme/close-dark.png"
+      }
+    },
+    {
+      "BulkImport/CollapseIcon": {
+        "Default": ":/images/BulkImport/DarkTheme/collapse-dark.png"
+      }
+    },
+    {
+      "BulkImport/ErrorIcon": {
+        "Default": ":/images/BulkImport/DarkTheme/error-dark.png"
+      }
+    },
+    {
+      "BulkImport/ExpandIcon": {
+        "Default": ":/images/BulkImport/DarkTheme/expand-dark.png"
+      }
+    },
+    {
+      "BulkImport/ImportIcon": {
+        "Default": ":/images/BulkImport/DarkTheme/import_dark.png",
+        "Disabled": ":/images/BulkImport/DarkTheme/import-disabled-dark.png"
+      }
+    },
+    {
+      "BulkImport/InProcessIcon": {
+        "Default": ":/images/BulkImport/inprocess.gif"
+      }
+    },
+    {
+      "BulkImport/SuccessIcon": {
+        "Default": ":/images/BulkImport/DarkTheme/success-dark.png"
+      }
+    },
+    {
+      "BulkImport/WarningIcon": {
+        "Default": ":/images/BulkImport/warning.png"
+      }
+    },
+    {
+      "MeshSplitting/ErrorIcon": {
+        "Default": ":/images/MeshSplitting/DarkTheme/error-dark.png"
+      }
+    },
+    {
+      "MeshSplitting/FinishedIcon": {
+        "Default": ":/images/MeshSplitting/DarkTheme/finished-dark.png"
+      }
+    },
+    {
+      "ExpandIcon": {
+        "Default": ":/16x16/images/Studio 2.0 icons/16x16/expand_DarkTheme.png"
+      }
+    },
+    {
+      "CollapseIcon": {
+        "Default": ":/16x16/images/Studio 2.0 icons/16x16/collapse_DarkTheme.png"
+      }
+    },
+    {
+      "MoreInfoIcon": {
+        "Default": ":/16x16/images/Studio 2.0 icons/16x16/more_details_dark.png"
+      }
+    },
+    {
+      "MoreInfoHoverIcon": {
+        "Default": ":/16x16/images/Studio 2.0 icons/16x16/more_details_hover_dark.png"
+      }
+    },
+    {
+      "ArrowRightIcon": {
+        "Default": ":/16x16/images/Studio 2.0 icons/16x16/arrowright_DarkTheme.png"
+      }
+    },
+    {
+      "ArrowLeftIcon": {
+        "Default": ":/16x16/images/Studio 2.0 icons/16x16/arrowleft_DarkTheme.png"
+      }
+    },
+    {
+      "DeleteIcon": {
+        "Default": ":/16x16/images/Studio 2.0 icons/16x16/delete_DarkTheme.png"
+      }
+    },
+    {
+      "PackageHasUpdateIcon": {
+        "Default": ":/16x16/images/Studio 2.0 icons/16x16/Packages/E_update_dark.png"
+      }
+    },
+    {
+      "PackageLinkDecorator": {
+        "Default": ":/16x16/images/Studio 2.0 icons/16x16/Packages/E_link_dark.png",
+        "Selected": ":/16x16/images/Studio 2.0 icons/16x16/Packages/E_link_light_selection.png"
+      }
+    },
+    {
+      "PackageLinkDecoratorAutoUpdate": {
+        "Default": ":/16x16/images/Studio 2.0 icons/16x16/Packages/E_link_autoUpdate.png",
+        "Selected": ":/16x16/images/Studio 2.0 icons/16x16/Packages/E_link_light_selection.png"
+      }
+    },
+    {
+      "PackageLinkIcon": {
+        "Default": ":/16x16/images/Studio 2.0 icons/16x16/Packages/E_packagelink_dark.png"
+      }
+    },
+    {
+      "PackageLinkIconAutoUpdate": {
+        "Default": ":/16x16/images/Studio 2.0 icons/16x16/Packages/E_packagelink_autoUpdate.png"
+      }
+    },
+    {
+      "PackageMassUpdateCheckboxUncheckedIcon": {
+        "Default": ":/16x16/images/Studio 2.0 icons/16x16/Packages/checkbox_unchecked_dark.png",
+        "Hover": ":/16x16/images/Studio 2.0 icons/16x16/Packages/checkbox_unchecked_hover_dark.png",
+        "Disabled": ":/16x16/images/Studio 2.0 icons/16x16/Packages/checkbox_unchecked_disabled_dark.png"
+      }
+    },
+    {
+      "PackageMassUpdateCheckboxPartiallyCheckedIcon": {
+        "Default": ":/16x16/images/Studio 2.0 icons/16x16/Packages/checkbox_partiallyChecked_dark.png",
+        "Hover": ":/16x16/images/Studio 2.0 icons/16x16/Packages/checkbox_partiallyChecked_hover_dark.png",
+        "Disabled": ":/16x16/images/Studio 2.0 icons/16x16/Packages/checkbox_partiallyCheckedd_disabled_dark.png"
+      }
+    },
+    {
+      "PackageMassUpdateCheckboxCheckedIcon": {
+        "Default": ":/16x16/images/Studio 2.0 icons/16x16/Packages/checkbox_checked_dark.png",
+        "Hover": ":/16x16/images/Studio 2.0 icons/16x16/Packages/checkbox_checked_hover_dark.png",
+        "Disabled": ":/16x16/images/Studio 2.0 icons/16x16/Packages/checkbox_checked_disabled_dark.png"
+      }
+    },
+    {
+      "OutputContextDropdownCheckboxUncheckedIcon": {
+        "Default": ":/images/OutputWidget/checkbox_unchecked_dark.png"
+      }
+    },
+    {
+      "OutputContextDropdownCheckboxPartiallyCheckedIcon": {
+        "Default": ":/images/OutputWidget/checkbox_partiallyChecked_dark.png"
+      }
+    },
+    {
+      "OutputContextDropdownCheckboxCheckedIcon": {
+        "Default": ":/images/OutputWidget/checkbox_checked_dark.png"
+      }
+    },
+    {
+      "OutputContextDropdownCheckboxUncheckedWarningIcon": {
+        "Default": ":/images/OutputWidget/checkbox_unchecked_dark_warning.png"
+      }
+    },
+    {
+      "OutputContextDropdownCheckboxUncheckedErrorIcon": {
+        "Default": ":/images/OutputWidget/checkbox_unchecked_dark_error.png"
+      }
+    },
+    {
+      "OutputContextDropdownCheckboxCheckedWarningIcon": {
+        "Default": ":/images/OutputWidget/checkbox_checked_dark_warning.png"
+      }
+    },
+    {
+      "OutputContextDropdownCheckboxCheckedErrorIcon": {
+        "Default": ":/images/OutputWidget/checkbox_checked_dark_error.png"
+      }
+    },
+    {
+      "PackageMassUpdateProgressBarCheck": {
+        "Default": ":/16x16/images/Studio 2.0 icons/16x16/Packages/progressBar_check_dark.png"
+      }
+    },
+    {
+      "PackageMassUpdatePlaceListShadow": {
+        "Default": ":/16x16/images/Studio 2.0 icons/16x16/Packages/massUpdate_shadow_dark.png"
+      }
+    },
+    {
+      "PackageMassUpdateCancelJob": {
+        "Default": ":/16x16/images/Studio 2.0 icons/16x16/Packages/close.png"
+      }
+    },
+    {
+      "GameImagePlaceHolder": {
+        "Default": ":/images/StartPage/gameImagePlaceholder.png"
+      }
+    },
+    {
+      "GameImagePlaceHolder80": {
+        "Default": ":/images/StartPage/placeholder_dark_80.png"
+      }
+    },
+    {
+      "GameImagePlaceHolder60": {
+        "Default": ":/images/StartPage/placeholder_dark_60.png"
+      }
+    },
+    {
+      "ReplaceIcon": {
+        "Default": ":/16x16/images/Studio 2.0 icons/16x16/replace_DarkTheme.png"
+      }
+    },
+    {
+      "ReplaceAllIcon": {
+        "Default": ":/16x16/images/Studio 2.0 icons/16x16/replace_all_DarkTheme.png"
+      }
+    },
+    {
+      "RegExpIcon": {
+        "Default": ":/16x16/images/Studio 2.0 icons/16x16/regexp_DarkTheme.png"
+      }
+    },
+    {
+      "MatchCaseIcon": {
+        "Default": ":/16x16/images/Studio 2.0 icons/16x16/match_case_DarkTheme.png"
+      }
+    },
+    {
+      "MatchWholeWordIcon": {
+        "Default": ":/16x16/images/Studio 2.0 icons/16x16/match_whole_word_DarkTheme.png"
+      }
+    },
+    {
+      "CheckMarkIcon": {
+        "Default": ":/16x16/images/Studio 2.0 icons/16x16/check_mark_blue.png"
+      }
+    },
+    {
+      "PlusIcon": {
+        "Default": ":/16x16/images/Studio 2.0 icons/16x16/plus_grey.png"
+      }
+    },
+    {
+      "MinusIcon": {
+        "Default": ":/16x16/images/Studio 2.0 icons/16x16/minus_grey.png"
+      }
+    },
+    {
+      "MoreIcon": {
+        "Default": ":/16x16/images/Studio 2.0 icons/16x16/team_create_more.png"
+      }
+    },
+    {
+      "ResponsiveUIToggleOnIcon": {
+        "Default": ":/images/ResponsiveUI/Toggle/toggle_on_dark.png",
+        "Disabled": ":/images/ResponsiveUI/Toggle/toggle_on_disable_dark.png"
+      }
+    },
+    {
+      "ResponsiveUIToggleOffIcon": {
+        "Default": ":/images/ResponsiveUI/Toggle/toggle_off_dark.png",
+        "Disabled": ":/images/ResponsiveUI/Toggle/toggle_off_disable_dark.png"
+      }
+    },
+    {
+      "StatusSuccessIcon": {
+        "Default": ":/images/statusSuccess.png"
+      }
+    },
+    {
+      "WarningIcon": {
+        "Default": ":/images/warning_icon_52px.png"
+      }
+    },
+    {
+      "AlertIcon": {
+        "Default": ":/images/alert_icon_56px.png"
+      }
+    }
+  ],
+    "Package": {
+        "ProgressBar": {
+            "default": "#8be9fd",
+            "background": "#282a36",
+            "status-text": "#f8f8f2",
+            "status-error-text": "#ff5555"
+        },
+        "ScrollBarHandle": {
+            "default": "#8be9fd",
+            "hover": "#8be9fd"
+        },
+        "HoverWindowShadow": {
+            "stop0": "#272727",
+            "bottom-stop0": "#242424",
+            "stop1": "#2E2E2E"
+        }
+    },
+    "BulkImport": {
+        "ImportButton": {
+            "background-color": "#282a36",
+            "border-color": "#282a36",
+            "color": "#f8f8f2"
+        },
+        "ImportButtonDisabled": {
+            "color": "#6272a4"
+        },
+        "ImportButtonFrame": {
+            "background-color": "#282a36"
+        },
+        "ImportWidget": {
+            "background-color": "#282a36"
+        },
+        "ErrorCountLabel": {
+            "color": "#f8f8f2"
+        },
+        "ErrorText": {
+             "color": "#ff5555"
+        },
+        "InfoText": {
+             "color": "#f8f8f2"
+        },
+        "ProgressBar": {
+             "background-color": "#282a36",
+             "color": "#8be9fd"
+        }
+    },
+    "Merge": {
+        "TextUnconflicted": "#8be9fdBD",
+        "TextConflictActive": "#f8f8f2DD",
+        "TextConflictInactive": "#76C5D7BC",
+
+        "HighlightServerActive": "#50fa7b00",
+        "HighlightServerInactive": "#45D16800",
+        "HighlightDraftActive": "#8be9fd6F",
+        "HighlightDraftInactive": "#72BECF6E",
+        "HighlightOtherActive": "#8be9fdCC",
+        "HighlightOtherInactive": "#21AFAFCC",
+        "HighlightResolvedActive": "#f8f8f2BB",
+
+        "Background": "#282a36",
+
+        "OtherTopLabelOverride": "#8be9fdCC"
+    },
+    "MeshSplitting": {
+
+        "CancelButton": {
+            "background-color": "#343746"
+        },
+        "CancelButtonHover": {
+            "background-color": "#282a36"
+        },
+        "ErrorText": {
+            "color": "#ff5555"
+        },
+        "ProgressBar": {
+            "background-color": "#8be9fd"
+        },
+        "ScrollBarHandle": {
+            "background-color": "#737689"
+        }
+    },
+    "FlagEditor": {
+        "overrideBackground": "#C14141"
+    },
+    "CommonStyle": {
+      "mainBackground": "#282a36",
+      "inputFieldBackground": "#282a36",
+      "currentItemMarker": "#44475a",
+      "tooltip": "#44475a",
+      "tooltipBorder": "#282a36",
+      "tooltipText": "#f8f8f2",
+      "mainText": "#f8f8f2",
+      "mutedText": "#000000",
+      "dimmedText": "#6272a4",
+      "linkText": "#8be9fd",
+      "textRenderType": 0,
+      "fontWeight": 50
+    },
+    "Ribbon": {
+        "background": "#282a36",
+        "tabBar": "#44475a",
+        "tab": "#44475a",
+        "tab-selected": "#282a36",
+        "tab-hover": "#282a36",
+        "tab-topbar":"#8be9fd",
+        "tabText": "#D0D0CA",
+        "tabText-selected": "#f8f8f2",
+        "tabText-hover": "#f8f8f2",
+        "systemButton": "#6272a4",
+        "systemButton-hover": "#526089",
+        "button-selected": "#282a36",
+        "button-hover": "#1F212A",
+        "buttonBorder": "#1F212A",
+        "accentText": "#D0D0CA",
+        "disabledIconOpacity": 0.3
+    },
+    "InsertObjectWindow": {
+      "mainBackground": "#282a36",
+      "scrollViewBackground": "#44475a",
+      "categoryText": "#6272a4",
+      "separator": "#44475a",
+      "searchBoxBorder": "#44475a",
+      "settingsBorder":  "#44475a",
+      "dropShadow": "#BB404000",
+      "dropdownIcon": "qrc:/images/BulkImport/DarkTheme/collapse-dark.png",
+      "collapseIcon": "qrc:/images/InsertObject/single_dark.png",
+      "expandIcon":  "qrc:/images/InsertObject/multi_dark.png"
+    },
+    "Scrollbar": {
+        "background": "#282a36",
+        "handle": "#44475a",
+        "border": "#282a36"
+    },
+    "Combobox": {
+        "topMargin": 0,
+        "text": "#f8f8f2",
+        "border": "#282a36",
+        "opened": "#282a36",
+        "openedBorder": "#282a36",
+        "openedText": "#f8f8f2",
+        "downArrowIcon": "qrc:/images/StartPage/ArrowDownIconWhite.png",
+        "openedDownArrowIcon": "qrc:/images/StartPage/ArrowDownIconWhite.png",
+        "Dropdown": {
+            "background": "#44475a",
+            "frameVisible": false,
+            "itemHover": "#373A49",
+            "shadow": "#CB434300",
+            "shadowRadius": 18,
+            "shadowSamples": 17,
+            "shadowVerticalOffset": 2
+        }
+    },
+    "Checkbox": {
+        "background": "#282a36",
+        "checkedBackground": "#282a36",
+        "border": "#282a36",
+        "hoverBorder": "#1C1D25",
+        "checkMarkIcon": "qrc:/images/StartPage/checkmark_blue.png"
+    },
+    "SecondaryButton": {
+      "Default": {
+        "background-color": "#44475a",
+        "color": "#f8f8f2",
+        "font-size:": 16,
+        "border-color": "#282a36",
+        "border-radius": 3,
+        "min-height": 32
+      },
+      "Hover": {
+        "background-color": "#44475a"
+      },
+      "Pressed": {
+        "background-color": "#44475a"
+      },
+      "Disabled": {
+        "color": "#6272a4"
+      }
+    },
+    "Menu": {
+        "background": "#282a36",
+        "itemHover": "#44475a",
+        "shadow": "#98323200",
+        "shadowRadius": 12,
+        "shadowSamples": 25,
+        "shadowOpacity": 0.6,
+        "shadowVerticalOffset": 2
+    },
+    "ToastNotification": {
+        "background": "#44475a",
+        "border": "#282a36",
+        "messageText": "#f8f8f2",
+        "actionText": "#8be9fd",
+        "shadow": {
+            "background": "#98323200",
+            "radius": 12,
+            "samples": 25,
+            "opacity": 0.5,
+            "verticalOffset": 2,
+            "zValue": -1
+        }
+    },
+    "StartPage": [{
+            "Page": {
+                "background": "#282a36",
+                "noGamesRect": "#282a36",
+                "messageText": "#f8f8f2",
+                "dimmedText": "#44475a",
+                "labelText": "#f8f8f2",
+                "questionMarkIcon": "images/StartPage/QuestionMarkIcon.png"
+            }
+        }, {
+            "HeaderTab": {
+                "selectedMarker": "#8be9fd",
+                "text": "#C4C4C1",
+                "hoverText": "#f8f8f2",
+                "shadow": "#B43D3D18",
+                "shadowOpacity": 0.3
+            }
+        }, {
+            "GameWidget": {
+                "background": "#282a36",
+                "border": "#282a36",
+                "subText": "#44475a",
+                "messageText": "#44475a",
+                "dimmedText": "#6272a4",
+                "greenText": "#50fa7b",
+                "shadow": "#9A323200",
+                "shadowHOffset": 0,
+                "shadowVOffset": 2,
+                "shadowRadius": 18,
+                "shadowSamples": 25,
+                "shadowOpacity": 0.6,
+                "templateBookIcon": "qrc:/images/StartPage/DarkTheme/bookIcon-dark.png",
+                "contextMenuButtonIcon": "qrc:/images/StartPage/MoreIcon.png"
+            }
+        }, {
+            "SearchWidget": {
+                "text": "#f8f8f2",
+                "border": "#282a36",
+                "searchButtonIcon": "qrc:/images/StartPage/SearchIconGray.png"
+            }
+        }, {
+            "Sidebar": {
+                "background": "#44475a",
+                "buttonText": "#D6D6D1",
+                "selectedButtonText": "#f8f8f2",
+                "buttonHover": "#44475a",
+                "buttonSelected": "#8be9fd",
+                "border": "#282a36",
+                "borderWidth": 1,
+                "buttonWidth": 88
+            }
+        }, {
+            "ShareModal": {
+                "background": "#282a36",
+                "blurBackground": "#000000",
+                "titleBarBackground": "#44475a",
+                "grayBackground": "#44475a",
+                "stripeBackground": "#282a36",
+                "shareButtonBackground": "#282a36",
+                "shareButtonBorderWidth": 0,
+                "imageDivider": "#f8f8f2",
+                "shareText": "#8be9fd",
+                "subText": "#f8f8f2",
+                "messageText": "#f8f8f2",
+                "conversationMaskImage": "qrc:/images/StartPage/ProfileBorder_Dark.png",
+                "shadow": "#8A2D2D00",
+                "shadowRadius": 24,
+                "shadowSamples": 35,
+                "shadowOpacity": 0.7,
+                "shadowVerticalOffset": 2,
+                "shadowZValue": 0
+            }
+        }, {
+            "LoginPage": {
+                "background": "#282a36",
+                "separator": "#44475a",
+                "statusText": "#f8f8f2",
+                "versionText": "#6272a4",
+                "loginButton": "#72C1D2",
+                "loginButtonHover": "#8be9fd"
+            }
+        }, {
+            "WhatsNew": {
+                "border": "#282a36",
+                "scrollBarHandle": "#44475a",
+                "highlight": "#44475a",
+                "lineSeparator": "#282a36",
+                "seeAllText": "#ff79c6",
+                "shadow": "#000000"
+            }
+        }
+    ]
+}
