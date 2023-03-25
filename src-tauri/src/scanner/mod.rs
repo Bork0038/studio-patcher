@@ -8,12 +8,9 @@ pub struct Scanner {
 
 impl Scanner {
     pub fn new( data: &[u8] ) -> Self {
-        let mut scanner = Scanner { 
-            data: Vec::default()
-        };
-
-        scanner.data.clone_from_slice(data);
-        scanner
+        Scanner { 
+            data: data.to_vec()
+        }
     }
 
     pub fn scan<P: Pattern>( &self, pattern: &P ) -> Option<usize> {
