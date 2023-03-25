@@ -1,9 +1,5 @@
-use std::borrow::BorrowMut;
-
 use super::{ Patch, IDAPat, Scanner, ReplacementPatch, PatchType, OffsetPatch };
 use lazy_static::lazy_static;
-use std::rc::Rc;
-use std::cell::RefCell;
 
 pub struct ExtendedExplorerPatch;
 
@@ -54,13 +50,13 @@ impl ExtendedExplorerPatch {
         }
     }
 
-    pub fn patch( data: Rc<RefCell<Vec<u8>>> ) -> Result<(), String> {
-        let scanner = Scanner::new( data.clone() );
+    pub fn patch( data: &mut [u8] ) -> Result<(), String> {
+        let scanner = Scanner::new( data );
 
         for patch in PATCHES.iter() {
             patch.patch( 
                 &scanner, 
-                data.clone()
+                data
             )?;
         }
 

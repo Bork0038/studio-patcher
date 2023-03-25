@@ -1,8 +1,6 @@
 use super::super::patches;
 use std::fs::OpenOptions;
 use std::io::{ Read, Write };
-use std::rc::Rc;
-use std::cell::RefCell;
 use tokio::task::spawn;
 use tauri::Window;
 
@@ -37,7 +35,7 @@ impl PatchResult {
 }
 
 pub fn install_patches_internal( patches: PatchRequest ) -> PatchResult {
-    let mut cell = Rc::new( RefCell::new( Vec::new() ) );
+    let mut cell: Vec<u8> = Vec::new(); 
 
     let mut file = match OpenOptions::new()
         .read( true )
@@ -46,10 +44,10 @@ pub fn install_patches_internal( patches: PatchRequest ) -> PatchResult {
             Err(e) => return PatchResult::error( e.to_string() )
         };
 
-    file.read_to_end( &mut cell.borrow_mut() ).unwrap();
+    file.read_to_end( &mut cell ).unwrap();
     
     match patches::install_patches( 
-        cell.clone(),  
+        &mut cell[0..],  
         patches.patches 
     ) {
         Ok(_) => {},
@@ -64,7 +62,6 @@ pub fn install_patches_internal( patches: PatchRequest ) -> PatchResult {
             Err(e) => return PatchResult::error( e.to_string() )
         };
     
-    let cell = cell.borrow();
     match file.write( cell.as_ref() ) {
         Ok(_) => PatchResult::success(),
         Err( e ) => PatchResult::error( e.to_string() )

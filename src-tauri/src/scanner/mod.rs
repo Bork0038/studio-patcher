@@ -1,34 +1,32 @@
 mod pattern;
 
 pub use pattern::*;
-use std::rc::Rc;
-use std::cell::RefCell;
 
 pub struct Scanner {
-    data: Rc<RefCell<Vec<u8>>>
+    data: Vec<u8>
 }
 
 impl Scanner {
+    pub fn new( data: &[u8] ) -> Self {
+        let mut scanner = Scanner { 
+            data: Vec::default()
+        };
 
-    pub fn new( data: Rc<RefCell<Vec<u8>>> ) -> Self {
-        Scanner { 
-            data 
-        }
+        scanner.data.clone_from_slice(data);
+        scanner
     }
 
     pub fn scan<P: Pattern>( &self, pattern: &P ) -> Option<usize> {
-        let data = self.data.borrow_mut();
-
-        for i in 0..data.len() {
+        for i in 0..self.data.len() {
             let mut found = true;
 
             for j in 0..pattern.get_len() {
-                if i + j >= data.len() {
+                if i + j >= self.data.len() {
                     found = false;
                     break;
                 }
 
-                if !pattern.scan( data[i + j], j ) {
+                if !pattern.scan( self.data[i + j], j ) {
                     found = false;
                     break;
                 }
