@@ -7,6 +7,8 @@ mod extended_explorer;
 use internal_studio::InternalStudioPatch;
 use extended_explorer::ExtendedExplorerPatch;
 
+use std::rc::Rc;
+use std::cell::RefCell;
 use super::scanner::*;
 
 pub fn get_patches() -> Vec<Patch> {
@@ -16,7 +18,7 @@ pub fn get_patches() -> Vec<Patch> {
     ]
 }
 
-pub fn install_patches( data: &mut  Box<Vec<u8>>, patches: Vec<String> ) -> Result<(), String> {
+pub fn install_patches( data: Rc<RefCell<Vec<u8>>>, patches: Vec<String> ) -> Result<(), String> {
     let patches_list = get_patches();
     
     let mut enabled_patches  = Vec::new();
@@ -27,7 +29,7 @@ pub fn install_patches( data: &mut  Box<Vec<u8>>, patches: Vec<String> ) -> Resu
     }
 
     for patch in enabled_patches {
-        match (patch.patch)( data ) {
+        match (patch.patch)( data.clone() ) {
             Ok(_) => {},
             Err(e) => return Err(
                 format!(

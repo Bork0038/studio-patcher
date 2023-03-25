@@ -1,7 +1,10 @@
 use super::{ IDAPat, Scanner };
+use std::rc::Rc;
+use std::cell::RefCell;
+
 pub struct Patch {
     pub name: String,
-    pub patch: fn( data: &mut Box<Vec<u8>> ) -> Result<(), String>
+    pub patch: fn( data: Rc<RefCell<Vec<u8>>> ) -> Result<(), String>
 }
 
 // this is sped
@@ -11,7 +14,7 @@ pub enum PatchType {
 
 impl PatchType {
 
-    pub fn patch( &self, scanner: &Scanner, data: &mut Box<Vec<u8>> ) -> Result<(), String> {
+    pub fn patch( &self, scanner: &Scanner, data: Rc<RefCell<Vec<u8>>> ) -> Result<(), String> {
         match self {
             PatchType::ReplacementPatch(p) => p.patch( scanner, data )
         }
@@ -50,7 +53,7 @@ impl ReplacementPatch {
         PatchType::ReplacementPatch( patch )
     }
 
-    pub fn patch( &self, scanner: &Scanner, data: &mut Box<Vec<u8>> ) -> Result<(), String> {
+    pub fn patch( &self, scanner: &Scanner, mut data: Rc<RefCell<Vec<u8>>> ) -> Result<(), String> {
         let addr = scanner.scan( &self.pattern )
             .map_or(
                 Err( 
@@ -59,6 +62,7 @@ impl ReplacementPatch {
                 | addr | Ok(addr) 
             )?;
         
+        let mut data = data.borrow_mut();
         for patch in self.patches.iter() {
             let bytes = &patch.bytes;
             let addr  = addr + patch.offset;
