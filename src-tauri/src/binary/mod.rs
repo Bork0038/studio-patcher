@@ -9,6 +9,7 @@ pub use optional_header::OptionalHeader;
 pub use sections::{ Section, SectionHeader };
 
 use std::mem::transmute;
+use std::io::Write;
 
 pub fn align_to( value: usize, alignment: usize ) -> usize {
     let r = value % alignment;
@@ -109,7 +110,7 @@ impl Binary {
         }
     }
 
-    pub fn add_section( &mut self, section: Section ) {
+    pub fn add_section( &mut self, mut section: Section ) {
         let file_alignment = self.optional_header.win_fields.file_alignment as usize;
         let section_alignment = self.optional_header.win_fields.section_alignment as usize;
 
@@ -137,7 +138,49 @@ impl Binary {
             section_alignment
         ) as u32;
 
+        section.header.size_of_raw_data = section_size as u32;
+        section.header.virtual_size = section_size as u32;
 
+        section.header.pointer_to_raw_data = align_to(
+            last_section.header.pointer_to_raw_data as usize + last_section.header.size_of_raw_data as usize,
+            file_alignment
+        ) as u32;
+        section.header.virtual_address = rva as u32;
+
+        self.sections.push( section );
     }
 
+    pub unsafe fn compile( &mut self ) -> Box<Vec<u8>> {
+        let mut out = Box::new( Vec::new() );
+
+        {
+            let dos_header_data = transmute::<DOSHeader, [u8; 64]>( self.dos_header );
+
+            out
+                .write( &dos_header_data )
+                .unwrap();
+        }
+
+        out
+            .write( &self.dos_stub )
+            .unwrap();
+
+        {
+            let coff_header_data = transmute::<COFFHeader, [u8; 24]>( self.coff_header );
+
+            out
+                .write( &coff_header_data )
+                .unwrap();
+        }
+
+        {
+            let optional_header_data = transmute::<OptionalHeader, [u8; 240]>( self.optional_header );
+
+            out
+                .write( &optional_header_data )
+                .unwrap();
+        }
+
+        out
+    }
 }
