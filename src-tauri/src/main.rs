@@ -2,6 +2,7 @@
 
 mod commands;
 mod patches;
+//  mod binary;
 mod scanner;
 
 #[tokio::main]

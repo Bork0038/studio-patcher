@@ -53,30 +53,27 @@ pub struct CodePat {
 
 impl CodePat {
 
-    pub fn new( pattern: &'static str, mask: &'static str ) -> Self {
-        let mut vec = Vec::new();
+    pub fn new(pattern: &'static str, mask: &'static str) -> Self {
+        let bytes: Vec<PatternByte> = pattern
+            .chars()
+            .zip(mask.chars())
+            .enumerate()
+            .map(|(i,(pattern, mask))| PatternByte {
+                byte: match mask {
+                    'x' => Some(pattern),
+                    _ => None,
+                },
+                pos: i,
+            })
+            .collect();
 
-        let mut pattern_chars = pattern.chars();
-        let mut i = 0;
-        for byte in mask.chars() {
-            if byte == 'x' {
-                vec.push( 
-                    PatternByte { 
-                        byte: pattern_chars.next(), 
-                        pos: i
-                    }
-                );
-            } else {
-                vec.push(
-                    PatternByte { byte: None, pos: i }
-                )
-            }
-            i += 1;
+        CodePat {
+            pattern,
+            mask,
+            bytes,
         }
-
-        CodePat { pattern, mask, bytes: vec }
     }
-
+    
 }
 
 impl Pattern for CodePat {
