@@ -10,11 +10,18 @@ pub use sections::{ Section, SectionHeader };
 
 use std::mem::transmute;
 use std::io::Write;
+use positioned_io::WriteAt;
+use num_traits::NumCast;
 
-pub fn align_to( value: usize, alignment: usize ) -> usize {
+pub fn align_to<A, B, C>( value: A, alignment: B ) -> C 
+where A: NumCast, B: NumCast, C: NumCast {
+    let value = <usize as NumCast>::from( value ).unwrap();
+    let alignment = <usize as NumCast>::from( alignment ).unwrap();
+
     let r = value % alignment;
+    let res = if r != 0 { value + alignment - r  } else { value };
 
-    if r != 0 { value + alignment - r  } else { value }
+    <C as NumCast>::from( res ).unwrap()
 }
 
 const SIZE_NT_HEADERS: usize = 264;
@@ -43,7 +50,7 @@ impl Binary {
         };
 
         let lfanew = dos_header.e_lfanew as usize;
-        let dos_stub = Vec::from( &data[ 64 .. 192 ]);
+        let dos_stub = Vec::from( &data[ 64 .. lfanew ]);
         
         let coff_header = {
             let coff_slice: &[u8; 24] = &data[ lfanew.. lfanew + 24 ]
@@ -121,36 +128,37 @@ impl Binary {
             .unwrap();
         
         let rva = align_to(
-            last_section.header.virtual_address as usize + last_section.header.virtual_size as usize, 
+            last_section.header.virtual_address + last_section.header.virtual_size, 
             section_alignment
         );
 
-        let section_size = section.data.len();
+        let section_size = section.data.len() as u32;
 
         self.optional_header.coff_fields.size_of_initialized_data += section_size as u32;
         self.optional_header.win_fields.size_of_headers = align_to(
-            self.dos_header.e_lfanew as usize + SIZE_NT_HEADERS +
-            self.coff_header.number_of_sections as usize * SIZE_SECTION_HEADER, 
+            self.dos_header.e_lfanew + SIZE_NT_HEADERS as u32 +
+            self.coff_header.number_of_sections as u32 * SIZE_SECTION_HEADER as u32, 
             file_alignment
-        ) as u32;
+        );
         self.optional_header.win_fields.size_of_image = align_to( 
             rva + section_size,
             section_alignment
-        ) as u32;
+        );
 
-        section.header.size_of_raw_data = section_size as u32;
-        section.header.virtual_size = section_size as u32;
+        section.header.size_of_raw_data = section_size;
+        section.header.virtual_size = section_size;
 
         section.header.pointer_to_raw_data = align_to(
-            last_section.header.pointer_to_raw_data as usize + last_section.header.size_of_raw_data as usize,
+            last_section.header.pointer_to_raw_data + last_section.header.size_of_raw_data,
             file_alignment
-        ) as u32;
-        section.header.virtual_address = rva as u32;
+        );
+        section.header.virtual_address = rva;
 
         self.sections.push( section );
     }
 
     pub unsafe fn compile( &mut self ) -> Box<Vec<u8>> {
+        let file_alignment = self.optional_header.win_fields.file_alignment as usize;
         let mut out = Box::new( Vec::new() );
 
         {
@@ -179,6 +187,23 @@ impl Binary {
             out
                 .write( &optional_header_data )
                 .unwrap();
+        }
+
+        for section in &self.sections {
+            let header_data = transmute::<SectionHeader, [u8; SIZE_SECTION_HEADER]>( section.header );
+
+            out
+                .write( &header_data )
+                .unwrap();  
+        }   
+        
+        let mut index: u64 = align_to( out.len(), file_alignment );
+        for section in &self.sections {
+            out
+                .write_at( index as u64, &section.data )
+                .unwrap();
+
+            index += align_to::<u32, usize, u64>( section.header.size_of_raw_data, file_alignment );
         }
 
         out
