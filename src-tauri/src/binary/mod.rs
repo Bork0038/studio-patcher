@@ -8,7 +8,7 @@ pub use coff_header::COFFHeader;
 pub use optional_header::OptionalHeader;
 pub use sections::{ Section, SectionHeader };
 
-use std::mem::transmute;
+use std::mem::{ transmute, size_of };
 use std::io::Write;
 use positioned_io::WriteAt;
 use num_traits::NumCast;
@@ -117,11 +117,29 @@ impl Binary {
         }
     }
 
-    pub fn add_section( &mut self, mut section: Section ) {
-        let file_alignment = self.optional_header.win_fields.file_alignment as usize;
-        let section_alignment = self.optional_header.win_fields.section_alignment as usize;
+    pub fn change_file_alignment<A: NumCast>( &mut self, alignment: A ) {
+        let alignment = <u32 as NumCast>::from( alignment )
+            .map_or( 0x200, | a | a );
 
+        self.dos_stub = Vec::new();
+        self.dos_header.e_lfanew = size_of::<DOSHeader>() as u32;
+
+        self.optional_header.win_fields.size_of_headers =
+            self.dos_header.e_lfanew +
+           size_of::<COFFHeader>() as u32 +
+           self.coff_header.size_optional_header as u32+
+           self.coff_header.number_of_sections as u32 * SIZE_SECTION_HEADER as u32;
+        
+      //  for section in 
+    }
+
+    pub fn add_section( &mut self, mut section: Section ) {
+        let file_alignment = self.optional_header.win_fields.file_alignment;
+        let section_alignment = self.optional_header.win_fields.section_alignment as usize;
         self.coff_header.number_of_sections += 1;
+        self.sections.sort_by(|a, b| {
+            a.header.pointer_to_raw_data.cmp(&b.header.pointer_to_raw_data)
+        });
 
         let last_section = self.sections
             .last()
@@ -147,7 +165,7 @@ impl Binary {
 
         section.header.size_of_raw_data = section_size;
         section.header.virtual_size = section_size;
-
+        println!("{:02X}", last_section.header.pointer_to_raw_data);
         section.header.pointer_to_raw_data = align_to(
             last_section.header.pointer_to_raw_data + last_section.header.size_of_raw_data,
             file_alignment
