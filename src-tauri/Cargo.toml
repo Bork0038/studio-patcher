@@ -20,6 +20,7 @@ tokio = { version = "1.26.0", features = ["full"] }
 lazy_static = "1.4.0"
 positioned-io = "0.3.1"
 num-traits = "0.2.15"
+object = { version = "0.30.3", features = ["write"] }
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

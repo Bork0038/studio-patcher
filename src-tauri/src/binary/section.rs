@@ -34,8 +34,6 @@ pub const IMAGE_SCN_MEM_EXECUTE: usize = 0x20000000;
 pub const IMAGE_SCN_MEM_READ: usize = 0x40000000;
 pub const IMAGE_SCN_MEM_WRITE: usize = 0x80000000;
 
-#[derive(Clone, Copy)]
-#[repr(C)]
 pub struct SectionHeader {
     pub name: [u8; 8],
     pub virtual_size: u32,
@@ -89,13 +87,15 @@ impl Section {
             }
         };
 
+        let data = data.as_ref().to_vec();
+        let len  = data.len();
         Section {
-            data: data.as_ref().to_vec(),
+            data: data,
             header: SectionHeader { 
                 name,	
-                virtual_size: 0,	
+                virtual_size: len as u32,	
                 virtual_address: 0,	
-                size_of_raw_data: 0,	
+                size_of_raw_data: len as u32,	
                 pointer_to_raw_data: 0,	
                 pointer_to_relocations: 0,	
                 pointer_to_line_numbers: 0,	
@@ -104,23 +104,6 @@ impl Section {
                 characteristics: (IMAGE_SCN_MEM_WRITE | IMAGE_SCN_MEM_READ | IMAGE_SCN_MEM_EXECUTE | IMAGE_SCN_CNT_CODE | IMAGE_SCN_CNT_INITIALIZED_DATA) as u32
             }
         }
-    }
-
-}
-
-
-impl SectionHeader {
-
-    pub fn get_name( &self ) -> String {
-        let name = self.name.to_vec();
-
-        let iter = name
-            .iter()
-            .filter( |c| **c != 0 )
-            .map( |x| *x )
-            .collect();
-
-        String::from_utf8( iter ).unwrap()
     }
 
 }

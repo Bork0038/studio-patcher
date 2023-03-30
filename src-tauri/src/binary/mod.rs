@@ -1,229 +1,134 @@
-mod dos_header;
-mod coff_header;
-mod optional_header;
-mod sections;
+mod section;
+pub use section::Section;
 
-pub use dos_header::DOSHeader;
-pub use coff_header::COFFHeader;
-pub use optional_header::OptionalHeader;
-pub use sections::{ Section, SectionHeader };
+use std::error::Error;
+use object::{
+    pe::{
+        ImageNtHeaders64, 
+        ImageDosHeader,
+    },
+    read::pe::{
+        ImageNtHeaders,
+        ImageOptionalHeader,
+    },
+    read::{
+        Object as ReadObject, 
+        pe::RichHeaderInfo
+    },
+    LittleEndian,
+    File,
+    write::{Object as WriteObject, pe::NtHeaders},
+    write::pe::Writer
+};
 
-use std::mem::{ transmute, size_of };
-use std::io::Write;
-use positioned_io::WriteAt;
-use num_traits::NumCast;
-
-pub fn align_to<A, B, C>( value: A, alignment: B ) -> C 
-where A: NumCast, B: NumCast, C: NumCast {
-    let value = <usize as NumCast>::from( value ).unwrap();
-    let alignment = <usize as NumCast>::from( alignment ).unwrap();
-
-    let r = value % alignment;
-    let res = if r != 0 { value + alignment - r  } else { value };
-
-    <C as NumCast>::from( res ).unwrap()
+pub struct Binary<'a> {
+    file: WriteObject<'a>
 }
 
-const SIZE_NT_HEADERS: usize = 264;
-const SIZE_SECTION_HEADER: usize = 40;
+impl<'a> Binary<'a> {
 
-
-pub struct Binary {
-    pub dos_header: DOSHeader,
-    pub dos_stub: Vec<u8>,
-    pub coff_header: COFFHeader,
-    pub optional_header: OptionalHeader,
-    pub sections: Vec<Section>
-}
-
-impl Binary {
-
-    pub unsafe fn new<D: AsRef<[u8]>>( data: D ) -> Self {
+    pub fn add_section<'b, T: AsRef<[u8]>>( data: T, section: Section ) -> Result<Vec<u8>,  Box<dyn Error>> {
         let data = data.as_ref();
 
-        let dos_header = {
-            let dos_slice: &[u8; 64] = &data[ 0..64]
-                .try_into()
-                .unwrap();
-
-            transmute::<[u8; 64], DOSHeader>( *dos_slice )
-        };
-
-        let lfanew = dos_header.e_lfanew as usize;
-        let dos_stub = Vec::from( &data[ 64 .. lfanew ]);
+        let dos_header = ImageDosHeader::parse( data )?;
+        let mut offset = dos_header.nt_headers_offset().into();
+        let rich_header = RichHeaderInfo::parse( data, offset );
         
-        let coff_header = {
-            let coff_slice: &[u8; 24] = &data[ lfanew.. lfanew + 24 ]
-                .try_into()
-                .unwrap();
+        let (nt_headers, data_directories) = ImageNtHeaders64::parse( data, &mut offset )?;
+        let file_header = nt_headers.file_header();
+        let opt_header = nt_headers.optional_header();
+        let sections = file_header.sections( data, offset )?;
 
-            transmute::<[u8; 24], COFFHeader>( *coff_slice )
-        };
+        let mut out = Vec::new();
+        let mut writer = Writer::new(
+            nt_headers.is_type_64(),
+            opt_header.section_alignment(),
+            opt_header.file_alignment(),
+            &mut out
+        );
 
-        let optional_header = {
-            let optional_header_slice: &[u8; 240] = &data[ lfanew + 24..lfanew + 264 ]
-                .try_into()
-                .unwrap();
-
-            transmute::<[u8; 240], OptionalHeader>( *optional_header_slice )
-        };
-
-        let mut section_start = lfanew + SIZE_NT_HEADERS; 
-        let mut section_table = Vec::new();
-        for _ in 0..coff_header.number_of_sections {
-            let section_header = {
-                let section_header_slice: &[u8; SIZE_SECTION_HEADER] = &data[ section_start..section_start + SIZE_SECTION_HEADER ]
-                    .try_into()
-                    .unwrap();
-
-                transmute::<[u8; SIZE_SECTION_HEADER], SectionHeader>( *section_header_slice )
-            };
-
-            section_table.push( section_header );
-            section_start += SIZE_SECTION_HEADER;
+        writer.reserve_dos_header_and_stub();
+        if let Some(rich_header) = rich_header { 
+            writer.reserve( rich_header.length as u32 + 8,  4);
         }
+        writer.reserve_nt_headers( data_directories.len() );
 
-        let mut section_data = Vec::new();
-        for section in section_table {
-            let start = section.pointer_to_raw_data as usize;
-            let size  = section.size_of_raw_data as usize; 
-            
-            if size == 0 || start == 0 {
-                section_data.push(
-                    Section {
-                        header: section,
-                        data: Vec::new()
-                    }
-                );
-
-                continue
-            }
-
-            let section_slice = &data[ start .. start + size ];
-            section_data.push(
-                Section {
-                    header: section,
-                    data: section_slice.to_vec()
-                }
+        for (index, directory) in data_directories.iter().enumerate() {
+            writer.set_data_directory( 
+                index, 
+                directory.virtual_address.get(LittleEndian), 
+                directory.size.get(LittleEndian)
             );
-        }
-
-        Binary { 
-            dos_header,
-            dos_stub,
-            coff_header,
-            optional_header,
-            sections: section_data
-        }
-    }
-
-    pub fn change_file_alignment<A: NumCast>( &mut self, alignment: A ) {
-        let alignment = <u32 as NumCast>::from( alignment )
-            .map_or( 0x200, | a | a );
-
-        self.dos_stub = Vec::new();
-        self.dos_header.e_lfanew = size_of::<DOSHeader>() as u32;
-
-        self.optional_header.win_fields.size_of_headers =
-            self.dos_header.e_lfanew +
-           size_of::<COFFHeader>() as u32 +
-           self.coff_header.size_optional_header as u32+
-           self.coff_header.number_of_sections as u32 * SIZE_SECTION_HEADER as u32;
-        
-      //  for section in 
-    }
-
-    pub fn add_section( &mut self, mut section: Section ) {
-        let file_alignment = self.optional_header.win_fields.file_alignment;
-        let section_alignment = self.optional_header.win_fields.section_alignment as usize;
-        self.coff_header.number_of_sections += 1;
-        self.sections.sort_by(|a, b| {
-            a.header.pointer_to_raw_data.cmp(&b.header.pointer_to_raw_data)
-        });
-
-        let last_section = self.sections
-            .last()
-            .unwrap();
-        
-        let rva = align_to(
-            last_section.header.virtual_address + last_section.header.virtual_size, 
-            section_alignment
-        );
-
-        let section_size = section.data.len() as u32;
-
-        self.optional_header.coff_fields.size_of_initialized_data += section_size as u32;
-        self.optional_header.win_fields.size_of_headers = align_to(
-            self.dos_header.e_lfanew + SIZE_NT_HEADERS as u32 +
-            self.coff_header.number_of_sections as u32 * SIZE_SECTION_HEADER as u32, 
-            file_alignment
-        );
-        self.optional_header.win_fields.size_of_image = align_to( 
-            rva + section_size,
-            section_alignment
-        );
-
-        section.header.size_of_raw_data = section_size;
-        section.header.virtual_size = section_size;
-        println!("{:02X}", last_section.header.pointer_to_raw_data);
-        section.header.pointer_to_raw_data = align_to(
-            last_section.header.pointer_to_raw_data + last_section.header.size_of_raw_data,
-            file_alignment
-        );
-        section.header.virtual_address = rva;
-
-        self.sections.push( section );
-    }
-
-    pub unsafe fn compile( &mut self ) -> Box<Vec<u8>> {
-        let file_alignment = self.optional_header.win_fields.file_alignment as usize;
-        let mut out = Box::new( Vec::new() );
-
-        {
-            let dos_header_data = transmute::<DOSHeader, [u8; 64]>( self.dos_header );
-
-            out
-                .write( &dos_header_data )
-                .unwrap();
-        }
-
-        out
-            .write( &self.dos_stub )
-            .unwrap();
-
-        {
-            let coff_header_data = transmute::<COFFHeader, [u8; 24]>( self.coff_header );
-
-            out
-                .write( &coff_header_data )
-                .unwrap();
-        }
-
-        {
-            let optional_header_data = transmute::<OptionalHeader, [u8; 240]>( self.optional_header );
-
-            out
-                .write( &optional_header_data )
-                .unwrap();
-        }
-
-        for section in &self.sections {
-            let header_data = transmute::<SectionHeader, [u8; SIZE_SECTION_HEADER]>( section.header );
-
-            out
-                .write( &header_data )
-                .unwrap();  
         }   
         
-        let mut index: u64 = align_to( out.len(), file_alignment );
-        for section in &self.sections {
-            out
-                .write_at( index as u64, &section.data )
-                .unwrap();
+        writer.reserve_section_headers( file_header.number_of_sections.get(LittleEndian) + 1 );
+        
+        let mut reserved_sections = Vec::new();
+        for (index, section) in sections.iter().enumerate() {
+            let range = writer.reserve_section(
+                section.name,
+                section.characteristics.get(LittleEndian),
+                section.virtual_size.get(LittleEndian),
+                section.size_of_raw_data.get(LittleEndian)
+                
+            );
 
-            index += align_to::<u32, usize, u64>( section.header.size_of_raw_data, file_alignment );
+            reserved_sections.push((
+                range.file_offset,
+                section.pe_data( data )?
+            ));
         }
 
-        out
+        {
+            let range = writer.reserve_section(
+                section.header.name,
+                section.header.characteristics,
+                section.header.virtual_size,
+                section.header.size_of_raw_data
+                
+            );
+
+            reserved_sections.push((
+                range.file_offset,
+                section.data.as_ref()
+            ));
+        }
+
+        writer.write_dos_header_and_stub()?;
+        if let Some(rich_header) = rich_header {
+            writer.write_align( 4 );
+            writer.write( &data[rich_header.offset..][..rich_header.length] );
+        }
+
+        writer.write_nt_headers(NtHeaders {
+            machine: file_header.machine.get(LittleEndian),
+            time_date_stamp: file_header.time_date_stamp.get(LittleEndian),
+            characteristics: file_header.characteristics.get(LittleEndian),
+            major_linker_version: opt_header.major_linker_version(),
+            minor_linker_version: opt_header.minor_linker_version(),
+            address_of_entry_point: opt_header.address_of_entry_point(),
+            image_base: opt_header.image_base(),
+            major_operating_system_version: opt_header.major_operating_system_version(),
+            minor_operating_system_version: opt_header.minor_operating_system_version(),
+            major_image_version: opt_header.major_image_version(),
+            minor_image_version: opt_header.minor_image_version(),
+            major_subsystem_version: opt_header.major_subsystem_version(),
+            minor_subsystem_version: opt_header.minor_subsystem_version(),
+            subsystem: opt_header.subsystem(),
+            dll_characteristics: opt_header.dll_characteristics(),
+            size_of_stack_reserve: opt_header.size_of_stack_reserve(),
+            size_of_stack_commit: opt_header.size_of_stack_commit(),
+            size_of_heap_reserve: opt_header.size_of_heap_reserve(),
+            size_of_heap_commit: opt_header.size_of_heap_commit(),
+        });
+
+        writer.write_section_headers();
+        for (index, data) in reserved_sections {
+            writer.write_section( index, data );
+        }
+        writer.write_reloc_section();
+        
+        Ok( out )
     }
+
 }
