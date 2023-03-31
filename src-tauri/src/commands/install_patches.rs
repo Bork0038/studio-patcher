@@ -1,8 +1,11 @@
 use super::super::patches;
+use std::borrow::Borrow;
 use std::fs::OpenOptions;
 use std::io::{ Read, Write };
 use tokio::task::spawn;
 use tauri::Window;
+use std::rc::Rc;
+use std::cell::RefCell;
 
 #[derive(serde::Deserialize)]
 pub struct PatchRequest {
@@ -35,7 +38,7 @@ impl PatchResult {
 }
 
 pub fn install_patches_internal( patches: PatchRequest ) -> PatchResult {
-    let mut cell: Vec<u8> = Vec::new(); 
+    let mut cell: Rc<RefCell<Vec<u8>>> = Rc::new( RefCell::new( Vec::new() ) ); 
 
     let mut file = match OpenOptions::new()
         .read( true )
@@ -44,10 +47,10 @@ pub fn install_patches_internal( patches: PatchRequest ) -> PatchResult {
             Err(e) => return PatchResult::error( e.to_string() )
         };
 
-    file.read_to_end( &mut cell ).unwrap();
+    file.read_to_end( &mut cell.borrow_mut() ).unwrap();
     
     match patches::install_patches( 
-        &mut cell[0..],  
+        cell.clone(),  
         patches.patches 
     ) {
         Ok(_) => {},
@@ -62,6 +65,7 @@ pub fn install_patches_internal( patches: PatchRequest ) -> PatchResult {
             Err(e) => return PatchResult::error( e.to_string() )
         };
     
+    let cell = cell.borrow_mut();
     match file.write( cell.as_ref() ) {
         Ok(_) => PatchResult::success(),
         Err( e ) => PatchResult::error( e.to_string() )

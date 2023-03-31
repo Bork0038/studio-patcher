@@ -2,14 +2,17 @@ mod pattern;
 
 pub use pattern::*;
 
+use std::rc::Rc;
+use std::cell::RefCell;
+
 pub struct Scanner {
     data: Vec<u8>
 }
 
 impl Scanner {
-    pub fn new( data: &[u8] ) -> Self {
+    pub fn new( data: Rc<RefCell<Vec<u8>>> ) -> Self {
         Scanner { 
-            data: data.to_vec()
+            data: data.borrow().clone()
         }
     }
 

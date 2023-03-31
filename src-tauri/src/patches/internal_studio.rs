@@ -1,5 +1,7 @@
 use super::{ Patch, IDAPat, Scanner, PatchType, ReplacementPatch, OffsetPatch };
 use lazy_static::lazy_static;
+use std::rc::Rc;
+use std::cell::RefCell;
 
 pub struct InternalStudioPatch;
 
@@ -29,13 +31,13 @@ impl InternalStudioPatch {
         }
     }
 
-    pub fn patch( data: &mut [u8] ) -> Result<(), String> {
-        let scanner = Scanner::new( data );
+    pub fn patch( data: Rc<RefCell<Vec<u8>>> ) -> Result<(), Box<dyn std::error::Error>> {
+        let scanner = Scanner::new( data.clone() );
 
         for patch in PATCHES.iter() {
             patch.patch( 
                 &scanner,
-                data
+                data.clone()
             )?;
         }
 

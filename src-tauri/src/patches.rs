@@ -3,20 +3,25 @@ pub use lib::*;
 
 mod internal_studio;
 mod extended_explorer;
+mod themes;
 
 use internal_studio::InternalStudioPatch;
 use extended_explorer::ExtendedExplorerPatch;
+use themes::ThemesPatch;
 
 use super::scanner::*;
+use std::rc::Rc;
+use std::cell::RefCell;
 
 pub fn get_patches() -> Vec<Patch> {
     vec![
         InternalStudioPatch::new(),
-        ExtendedExplorerPatch::new()
+        ExtendedExplorerPatch::new(),
+        ThemesPatch::new()
     ]
 }
 
-pub fn install_patches( data: &mut [u8], patches: Vec<String> ) -> Result<(), String> {
+pub fn install_patches( data: Rc<RefCell<Vec<u8>>>, patches: Vec<String> ) -> Result<(), String> {
     let patches_list = get_patches();
     
     let mut enabled_patches  = Vec::new();
@@ -27,7 +32,7 @@ pub fn install_patches( data: &mut [u8], patches: Vec<String> ) -> Result<(), St
     }
 
     for patch in enabled_patches {
-        match (patch.patch)( data ) {
+        match (patch.patch)( data.clone() ) {
             Ok(_) => {},
             Err(e) => return Err(
                 format!(

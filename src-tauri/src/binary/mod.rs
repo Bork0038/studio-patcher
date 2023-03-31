@@ -2,6 +2,8 @@ mod section;
 pub use section::Section;
 
 use std::error::Error;
+use std::rc::Rc;
+use std::cell::RefCell;
 use object::{
     pe::{
         ImageNtHeaders64, 
@@ -21,15 +23,14 @@ use object::{
     write::pe::Writer
 };
 
-pub struct Binary<'a> {
-    file: WriteObject<'a>
-}
+pub struct Binary;
 
-impl<'a> Binary<'a> {
+impl Binary {
 
-    pub fn add_section<'b, T: AsRef<[u8]>>( data: T, section: Section ) -> Result<Vec<u8>,  Box<dyn Error>> {
-        let data = data.as_ref();
-
+    pub fn add_section( data: Rc<RefCell<Vec<u8>>>, section: Section ) -> Result<(Vec<u8>, u32),  Box<dyn Error>> {
+        let mut data = data.borrow_mut();
+        let data: &[u8] = data.as_mut_slice();
+      
         let dos_header = ImageDosHeader::parse( data )?;
         let mut offset = dos_header.nt_headers_offset().into();
         let rich_header = RichHeaderInfo::parse( data, offset );
@@ -78,21 +79,19 @@ impl<'a> Binary<'a> {
                 section.pe_data( data )?
             ));
         }
+        
+        let range = writer.reserve_section(
+            section.header.name,
+            section.header.characteristics,
+            section.header.virtual_size,
+            section.header.size_of_raw_data
+            
+        );
 
-        {
-            let range = writer.reserve_section(
-                section.header.name,
-                section.header.characteristics,
-                section.header.virtual_size,
-                section.header.size_of_raw_data
-                
-            );
-
-            reserved_sections.push((
-                range.file_offset,
-                section.data.as_ref()
-            ));
-        }
+        reserved_sections.push((
+            range.file_offset,
+            section.data.as_ref()
+        ));
 
         writer.write_dos_header_and_stub()?;
         if let Some(rich_header) = rich_header {
@@ -128,7 +127,9 @@ impl<'a> Binary<'a> {
         }
         writer.write_reloc_section();
         
-        Ok( out )
+        Ok( 
+            ( out, range.file_offset )
+        )
     }
 
 }
