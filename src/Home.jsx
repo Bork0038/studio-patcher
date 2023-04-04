@@ -47,7 +47,7 @@ class App extends Component {
 				// 	name: "themes",
 				// 	title: "Themes",
 				// 	description: "Adds more themes to studio"
-				// }
+				// },
 				// {
 				// 	name: "disable-telemetry",
 				// 	title: "Disable Telemetry",

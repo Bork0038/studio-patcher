@@ -107,6 +107,7 @@ impl ThemesPatch {
             );
         }
 
+        let end_address = address as usize + section.len();
         let mut end_segment = Vec::from([ 255; 8 ]);
         section.append( &mut end_segment );
         
@@ -114,6 +115,7 @@ impl ThemesPatch {
             data[ offset as usize + i ] = section[ i ];
         }
 
+        println!("end_section: {:02X}", end_address);
 
         
         // let scanner = Scanner::new( data );
