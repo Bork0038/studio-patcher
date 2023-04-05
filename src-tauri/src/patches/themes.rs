@@ -86,6 +86,7 @@ impl ThemesPatch {
         binary.add_section( new_section );
 
         let section = binary.get_section_by_name(".themes").unwrap();
+        println!("{}", Binary::get_section_name( &section.0 ));
         // let (mut new_data, offset) = Binary::add_section( 
         //     data.clone(), 
         //     new_section

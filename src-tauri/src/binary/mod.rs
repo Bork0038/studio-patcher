@@ -68,14 +68,23 @@ impl Binary {
             sections
         } )
     }
-    
+
+    pub fn get_section_name( section: &ImageSectionHeader ) -> String {
+        String::from_utf8(
+            section.name.to_vec()
+        ).map_or( 
+            String::new(), 
+            | s | String::from( s.trim_end_matches("\0") )  
+        )
+    }
+
     pub fn get_section_by_name<S: Into<String>>( &mut self, name: S ) -> Option<&(ImageSectionHeader, Vec<u8>)> {
-        let name: String = name.into();
+        let name = name.into();
         
         self.sections
             .iter()
             .filter(|section| {
-                String::from_utf8( section.0.name.to_vec() ).map_or(String::new(), |s| s ) == name
+                Binary::get_section_name( &section.0 ) == name
             })
             .collect::<Vec<&(ImageSectionHeader, Vec<u8>)>>()
             .get( 0 )
