@@ -7,7 +7,10 @@ use std::cell::RefCell;
 use object::{
     pe::{
         ImageNtHeaders64, 
-        ImageDosHeader,
+        ImageDosHeader, 
+        ImageDataDirectory, 
+        ImageFileHeader,
+        ImageOptionalHeader64, ImageSectionHeader
     },
     read::pe::{
         ImageNtHeaders,
@@ -20,25 +23,86 @@ use object::{
     LittleEndian,
     File,
     write::{Object as WriteObject, pe::NtHeaders},
-    write::pe::Writer
+    write::pe::Writer, U32Bytes
 };
 
-pub struct Binary;
+pub struct Binary {
+    dos_header: ImageDosHeader,
+    nt_headers: ImageNtHeaders64,
+    data_directories: Vec<ImageDataDirectory>,
+    file_header: ImageFileHeader,
+    opt_header: ImageOptionalHeader64,
+    sections: Vec<(ImageSectionHeader, Vec<u8>)>
+}
 
 impl Binary {
-
-    pub fn add_section( data: Rc<RefCell<Vec<u8>>>, section: Section ) -> Result<(Vec<u8>, u32),  Box<dyn Error>> {
+    
+    pub fn new( data: Rc<RefCell<Vec<u8>>> ) -> Result<Self, Box<dyn Error>> {
         let mut data = data.borrow_mut();
         let data: &[u8] = data.as_mut_slice();
       
-        let dos_header = ImageDosHeader::parse( data )?;
+        let dos_header = *ImageDosHeader::parse( data )?;
         let mut offset = dos_header.nt_headers_offset().into();
-        let rich_header = RichHeaderInfo::parse( data, offset );
-        
+
         let (nt_headers, data_directories) = ImageNtHeaders64::parse( data, &mut offset )?;
         let file_header = nt_headers.file_header();
-        let opt_header = nt_headers.optional_header();
-        let sections = file_header.sections( data, offset )?;
+        let sections = file_header
+            .sections( data, offset )?
+            .iter()
+            .map(|section|
+                (
+                    *section,
+                    section
+                        .pe_data( data )
+                        .map_or(Vec::new(), |data| data.to_vec())
+                )
+            )
+            .collect();
+
+        Ok( Binary {
+            dos_header,
+            nt_headers: *nt_headers,
+            data_directories: data_directories.iter().map(|d| *d).collect(),
+            file_header: *file_header,
+            opt_header: *nt_headers.optional_header(),
+            sections
+        } )
+    }
+    
+    pub fn get_section_by_name<S: Into<String>>( &mut self, name: S ) -> Option<&(ImageSectionHeader, Vec<u8>)> {
+        let name: String = name.into();
+        
+        self.sections
+            .iter()
+            .filter(|section| {
+                String::from_utf8( section.0.name.to_vec() ).map_or(String::new(), |s| s ) == name
+            })
+            .collect::<Vec<&(ImageSectionHeader, Vec<u8>)>>()
+            .get( 0 )
+            .map_or(None, |d| Some( *d )) 
+    }
+
+    pub fn add_section( &mut self, section: Section ) {
+        let header = section.header;
+
+        self.sections.push((
+            ImageSectionHeader {
+                characteristics: U32Bytes::new(LittleEndian,  header.characteristics),
+                name: header.name,
+                virtual_size: U32Bytes::new(LittleEndian, header.virtual_size),
+                size_of_raw_data: U32Bytes::new( LittleEndian, header.size_of_raw_data ),
+                ..Default::default()
+            },
+            section.data.to_vec()
+        ));
+    }
+
+    pub fn compile( &mut self ) -> Result<Vec<u8>, Box<dyn Error>> {
+        let nt_headers = self.nt_headers;
+        let opt_header = self.opt_header;
+        let data_directories = &self.data_directories;
+        let file_header = self.file_header;
+        let sections = &self.sections;
 
         let mut out = Vec::new();
         let mut writer = Writer::new(
@@ -49,9 +113,6 @@ impl Binary {
         );
 
         writer.reserve_dos_header_and_stub();
-        if let Some(rich_header) = rich_header { 
-            writer.reserve( rich_header.length as u32 + 8,  4);
-        }
         writer.reserve_nt_headers( data_directories.len() );
 
         for (index, directory) in data_directories.iter().enumerate() {
@@ -65,7 +126,7 @@ impl Binary {
         writer.reserve_section_headers( file_header.number_of_sections.get(LittleEndian) + 1 );
         
         let mut reserved_sections = Vec::new();
-        for (index, section) in sections.iter().enumerate() {
+        for (section, data) in sections.iter() {
             let range = writer.reserve_section(
                 section.name,
                 section.characteristics.get(LittleEndian),
@@ -76,29 +137,11 @@ impl Binary {
 
             reserved_sections.push((
                 range.file_offset,
-                section.pe_data( data )?
+                data
             ));
         }
-        
-        let range = writer.reserve_section(
-            section.header.name,
-            section.header.characteristics,
-            section.header.virtual_size,
-            section.header.size_of_raw_data
-            
-        );
-
-        reserved_sections.push((
-            range.file_offset,
-            section.data.as_ref()
-        ));
 
         writer.write_dos_header_and_stub()?;
-        if let Some(rich_header) = rich_header {
-            writer.write_align( 4 );
-            writer.write( &data[rich_header.offset..][..rich_header.length] );
-        }
-
         writer.write_nt_headers(NtHeaders {
             machine: file_header.machine.get(LittleEndian),
             time_date_stamp: file_header.time_date_stamp.get(LittleEndian),
@@ -127,9 +170,7 @@ impl Binary {
         }
         writer.write_reloc_section();
         
-        Ok( 
-            ( out, range.file_offset )
-        )
+        Ok( out )
     }
 
 }

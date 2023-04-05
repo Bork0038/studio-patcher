@@ -82,40 +82,44 @@ impl ThemesPatch {
             std::iter::repeat( 0x00 ).take( section_size ).collect::<Vec<u8>>() 
         );
 
-        let (mut new_data, offset) = Binary::add_section( 
-            data.clone(), 
-            new_section
-        )?;
+        let mut binary = Binary::new( data )?;
+        binary.add_section( new_section );
+
+        let section = binary.get_section_by_name(".themes").unwrap();
+        // let (mut new_data, offset) = Binary::add_section( 
+        //     data.clone(), 
+        //     new_section
+        // )?;
         
-        let mut data = data.borrow_mut();
-        data.clear();   
-        data.append( &mut new_data );
+        // let mut data = data.borrow_mut();
+        // data.clear();   
+        // data.append( &mut new_data );
     
-        let address = File::parse( &**data )?
-            .section_by_name(".themes")
-            .map_or(
-                Err("Failed to find theme section"),
-                | a | Ok(a.address())
-            )?;
+        // let address = File::parse( &**data )?
+        //     .section_by_name(".themes")
+        //     .map_or(
+        //         Err("Failed to find theme section"),
+        //         | a | Ok(a.address())
+        //     )?;
 
        
-        println!("map_address: {:02X}", address as usize + section.len() );
-        for offset in offset_map {
-            println!("{:02X}", address as u64 + offset as u64);
-            section.append(
-                &mut u64::to_le_bytes( address as u64 + offset as u64 ).to_vec()
-            );
-        }
+        // println!("map_address: {:02X}", address as usize + section.len() );
+        // for offset in offset_map {
+        //     println!("{:02X}", address as u64 + offset as u64);
+        //     section.append(
+        //         &mut u64::to_le_bytes( address as u64 + offset as u64 ).to_vec()
+        //     );
+        // }
 
-        let end_address = address as usize + section.len();
-        let mut end_segment = Vec::from([ 255; 8 ]);
-        section.append( &mut end_segment );
+        // let end_address = address as usize + section.len();
+        // let mut end_segment = Vec::from([ 255; 8 ]);
+        // section.append( &mut end_segment );
         
-        for i in 0..section.len() {
-            data[ offset as usize + i ] = section[ i ];
-        }
+        // for i in 0..section.len() {
+        //     data[ offset as usize + i ] = section[ i ];
+        // }
 
-        println!("end_section: {:02X}", end_address);
+        // println!("end_section: {:02X}", end_address);
 
         
         // let scanner = Scanner::new( data );
