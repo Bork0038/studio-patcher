@@ -1,5 +1,8 @@
 mod section;
+mod pattern;
+
 pub use section::Section;
+pub use pattern::{ CodePat, IDAPat, Pattern };
 
 use std::error::Error;
 use std::rc::Rc;
@@ -32,7 +35,8 @@ pub struct Binary {
     data_directories: Vec<ImageDataDirectory>,
     file_header: ImageFileHeader,
     opt_header: ImageOptionalHeader64,
-    sections: Vec<(ImageSectionHeader, Vec<u8>)>
+    section_table: Vec<ImageSectionHeader>,
+    section_data: Vec<Vec<u8>>
 }
 
 impl Binary {
@@ -46,18 +50,13 @@ impl Binary {
 
         let (nt_headers, data_directories) = ImageNtHeaders64::parse( data, &mut offset )?;
         let file_header = nt_headers.file_header();
-        let sections = file_header
-            .sections( data, offset )?
-            .iter()
-            .map(|section|
-                (
-                    *section,
-                    section
-                        .pe_data( data )
-                        .map_or(Vec::new(), |data| data.to_vec())
-                )
-            )
-            .collect();
+
+        let mut section_table = Vec::new();
+        let mut section_data = Vec::new();
+        for section in file_header.sections(data, offset)?.iter() {
+            section_table.push( *section );
+            section_data.push( section.pe_data( data )?.to_vec() );
+        }
 
         Ok( Binary {
             dos_header,
@@ -65,7 +64,8 @@ impl Binary {
             data_directories: data_directories.iter().map(|d| *d).collect(),
             file_header: *file_header,
             opt_header: *nt_headers.optional_header(),
-            sections
+            section_data,
+            section_table
         } )
     }
 
@@ -106,7 +106,18 @@ impl Binary {
         ));
     }
 
-    pub fn compile( &mut self ) -> Result<Vec<u8>, Box<dyn Error>> {
+    pub fn scan<P, S>( &mut self, section: Option<S>, pattern: P) -> Option<usize> 
+    where P: Pattern, S: Into<String> 
+    {
+        let data = match section {
+            Some(section) => self
+                .get_section_by_name( section )
+                .map_or(default, f)
+        };
+        None
+    }
+
+    pub fn serialize( &mut self ) -> Result<Vec<u8>, Box<dyn Error>> {
         let nt_headers = self.nt_headers;
         let opt_header = self.opt_header;
         let data_directories = &self.data_directories;
