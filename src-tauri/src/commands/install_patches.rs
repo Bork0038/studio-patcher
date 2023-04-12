@@ -4,6 +4,7 @@ use tokio::task::spawn;
 use tauri::Window;
 use std::rc::Rc;
 use std::cell::RefCell;
+use crate::{ patches, Binary };
 
 #[derive(serde::Deserialize)]
 pub struct PatchRequest {
@@ -36,19 +37,28 @@ impl PatchResult {
 }
 
 pub fn install_patches_internal( patches: PatchRequest ) -> PatchResult {
-    let mut cell: Rc<RefCell<Vec<u8>>> = Rc::new( RefCell::new( Vec::new() ) ); 
+    let mut data = Vec::new();
 
-    let mut file = match OpenOptions::new()
-        .read( true )
-        .open( &patches.path ) {
-            Ok(file) => file,
-            Err(e) => return PatchResult::error( e.to_string() )
+    {
+        let mut file = match OpenOptions::new()
+            .read( true )
+            .open( &patches.path ) {
+                Ok(file) => file,
+                Err(e) => return PatchResult::error( e.to_string() )
+            };
+
+        if let Err(e) = file.read_to_end( &mut data ) {
+            return PatchResult::error( e.to_string() );
         };
+    }
 
-    file.read_to_end( &mut cell.borrow_mut() ).unwrap();
-    
+    let binary = match Binary::new( data ){
+        Ok(binary) => Rc::new( RefCell::new(  binary ) ),
+        Err(e) =>  return PatchResult::error( e.to_string() )
+    };
+
     match patches::install_patches( 
-        cell.clone(),  
+        binary.clone(),  
         patches.patches 
     ) {
         Ok(_) => {},
@@ -62,9 +72,13 @@ pub fn install_patches_internal( patches: PatchRequest ) -> PatchResult {
             Ok(file) => file,
             Err(e) => return PatchResult::error( e.to_string() )
         };
-    
-    let cell = cell.borrow_mut();
-    match file.write( cell.as_ref() ) {
+
+    let data = match binary.borrow_mut().serialize() {
+        Ok(data) => data,
+        Err(e) => return PatchResult::error( e.to_string() )
+    };
+
+    match file.write( data.as_ref() ) {
         Ok(_) => PatchResult::success(),
         Err( e ) => PatchResult::error( e.to_string() )
     }
