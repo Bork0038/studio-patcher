@@ -12,6 +12,15 @@ pub enum PatchType {
     ReplacementPatch(ReplacementPatch)
 }
 
+impl PatchType {
+
+    pub fn patch( &self, binary: Rc<RefCell<Binary>> ) -> Result<(), Box<dyn Error>> {
+        match self {
+            PatchType::ReplacementPatch(p) => p.patch( binary )
+        }
+    }
+}
+
 pub struct OffsetPatch {
     offset: usize,
     bytes: Vec<u8>
@@ -34,7 +43,7 @@ pub struct ReplacementPatch {
 
 impl ReplacementPatch {
 
-    pub fn new<Name, Section>( pattern: IDAPat, name: Name, section: Section, patches: Vec<OffsetPatch> ) -> PatchType 
+    pub fn new<Name, Section>( pattern: IDAPat, section: Section, name: Name, patches: Vec<OffsetPatch> ) -> PatchType 
     where Name: Into<String>, Section: Into<String>
     {
         let patch = ReplacementPatch {
@@ -53,7 +62,7 @@ impl ReplacementPatch {
         let addr = binary.scan( &self.pattern, Some( &self.section ) )
             .map_or(
                 Err(
-                    format!("Failed to find {}", self.name )
+                    format!("failed to find {}", self.name )
                 ),
                 | addr | Ok( addr )
             )?;
@@ -62,7 +71,7 @@ impl ReplacementPatch {
             .get_section_by_name( &self.section )
             .map_or(
                 Err(
-                    format!( "Failed to find section: {}", &self.section )
+                    format!( "failed to find section: {}", &self.section )
                 ),
                 | section | Ok( section )
             )?;

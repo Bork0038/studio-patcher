@@ -105,7 +105,7 @@ impl Binary {
             );
         }   
         
-        writer.reserve_section_headers( file_header.number_of_sections.get(LittleEndian) + 1 );
+        writer.reserve_section_headers( self.sections.len() as u16 );
         
         let mut reserved_sections = Vec::new();
         for section in self.sections.iter() {
@@ -121,7 +121,7 @@ impl Binary {
 
             reserved_sections.push((
                 range.file_offset,
-                section.data.clone()
+                &*section.data
             ));
         }
 

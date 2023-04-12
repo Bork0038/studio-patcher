@@ -62,7 +62,7 @@ pub fn install_patches_internal( patches: PatchRequest ) -> PatchResult {
         patches.patches 
     ) {
         Ok(_) => {},
-        Err(e) => return PatchResult::error( e )
+        Err(e) => return PatchResult::error( e.to_string() )
     };
 
     let mut file = match OpenOptions::new()
