@@ -64,16 +64,43 @@ impl Binary {
         } )
     }
 
-    pub fn get_section_by_name<S: Into<String>>( &mut self, name: S ) -> Option<&mut Section> {
+    pub fn reload( &mut self ) -> Result<(), Box<dyn Error>>{
+        let data = self.serialize()?;
+
+        let binary = Binary::new( data )?;
+            self.dos_header = binary.dos_header;
+            self.nt_headers = binary.nt_headers;
+            self.data_directories = binary.data_directories;
+            self.file_header = binary.file_header;
+            self.opt_header = binary.opt_header;
+            self.sections = binary.sections;
+
+        Ok(())
+    }
+
+    pub fn get_section_by_name<S: Into<String>>( &mut self, name: S ) -> Option<Section> {
         let name = name.into();
        
         for section in self.sections.iter_mut() {
             if section.get_name() == name {
-                return Some( section );
+                return Some( section.clone() );
             }
         }
 
         None
+    }
+
+    pub fn set_section_data<Name, Data>( &mut self, name: Name, data: Data ) -> Result<(), Box<dyn Error>> 
+    where Name: Into<String>, Data: AsRef<[u8]> {
+        let name = name.into();
+        
+        for section in self.sections.iter_mut() {
+            if section.get_name() == name {
+                section.data = data.as_ref().to_vec();
+            }
+        }
+
+        Ok(())
     }
 
     pub fn add_section( &mut self, section: Section ) {

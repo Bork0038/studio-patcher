@@ -3,9 +3,11 @@ pub use lib::*;
 
 mod internal_studio;
 mod extended_explorer;
+mod themes;
 
 use internal_studio::InternalStudioPatch;
 use extended_explorer::ExtendedExplorerPatch;
+use themes::ThemesPatch;
 
 use crate::Binary;
 use std::{ rc::Rc, cell::RefCell };
@@ -15,7 +17,8 @@ use std::error::Error;
 lazy_static! {
     static ref patch_list: Vec<Patch> = vec![
         InternalStudioPatch::new(),
-        ExtendedExplorerPatch::new()
+        ExtendedExplorerPatch::new(),
+        ThemesPatch::new()
     ];
 }
 
@@ -30,7 +33,6 @@ pub fn install_patches( data: Rc<RefCell<Binary>>, patches: Vec<String> ) -> Res
     for patch in enabled_patches {
         ( patch.patch )( data.clone() )?;
     }    
-
 
     Ok(())
 } 

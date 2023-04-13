@@ -76,14 +76,17 @@ impl ReplacementPatch {
                 | section | Ok( section )
             )?;
 
+        let mut data = section.data;
         for patch in self.patches.iter() {
             let bytes = &patch.bytes;
             let addr = addr + patch.offset;
 
             for i in 0..bytes.len() {
-                section.data[ addr + i ] = bytes[ i ];
+                data[ addr + i ] = bytes[ i ];
             }
         }
+
+        binary.set_section_data( &self.section, data )?;
 
         Ok(())
     }
