@@ -84,45 +84,60 @@ impl ThemesPatch {
             std::iter::repeat( 0x00 ).take( section_size ).collect::<Vec<u8>>() 
         );
 
-        let ( themes_section, text_section, theme_load_addr ) = {
-            let mut bin = binary.borrow_mut();
-            bin.add_section( new_section );
-            bin.reload()?;
-    
-            let themes_section = bin
-                .get_section_by_name( ".themes" )
-                .map_or(
-                    Err("Failed to find .themes section"), 
-                    | section | Ok(section)
-                )?;
-    
-            let text_section = bin
-                .get_section_by_name( ".text" )
-                .map_or(
-                    Err("Failed to find .text section"), 
-                    | section | Ok(section)
-                )?;   
+        let mut bin = binary.borrow_mut();
+        bin.add_section( new_section );
+        bin.reload()?;
 
-            let theme_load_addr = bin
-                .scan(
-                    &IDAPat::new( THEME_LOAD_PAT.clone() ),
-                    Some( ".text" )
-                )
-                .map_or(
-                    Err("Failed to find RBXQT::Theme::Theme"),
-                    | addr | Ok( addr )
-                )?;
-    
-            ( themes_section, text_section, theme_load_addr )
-        };
+        let themes_section = bin
+            .get_section_by_name( ".themes" )
+            .map_or(
+                Err("Failed to find .themes section"), 
+                | section | Ok(section)
+            )?;
 
+        let text_section = bin
+            .get_section_by_name( ".text" )
+            .map_or(
+                Err("Failed to find .text section"), 
+                | section | Ok(section)
+            )?;   
+
+        let theme_load_addr = bin
+            .scan(
+                &IDAPat::new( THEME_LOAD_PAT.clone() ),
+                Some( ".text" )
+            )
+            .map_or(
+                Err("Failed to find RBXQT::Theme::Theme"),
+                | addr | Ok( addr )
+            )?;
+            
         let themes_rva = themes_section.header.virtual_address.get(LittleEndian);
         let text_rva = text_section.header.virtual_address.get(LittleEndian);
 
         THEME_LOAD_PATCH.patch( binary.clone() )?;
 
-        let offset = themes_rva - ( text_rva + theme_load_addr as u32);
-        println!("Offset: {:02X}", offset);
+        let offset = themes_rva - ( text_rva + theme_load_addr as u32 );
+        
+        let mut patch = vec![
+            0x48, 0x89, 0xC0 , // mov rax, rip
+            0x48, 0x05 // add rax, ????
+        ];
+        patch.append( &mut u32::to_le_bytes( offset + 3 ).to_vec() );
+
+        patch.append( &mut vec![ 
+            0x48, 0x89, 0xC6, // mov rsi, rax
+            0x48, 0x81, 0xC6 // add rsi ????
+        ]);
+
+        let mut index = 0;
+        let mut text_data = text_section.data;
+        for i in 0..patch.len() { 
+            text_data[ theme_load_addr + index ] = patch[i];
+            index += 1;
+        };
+
+        bin.set_section_data( ".text", text_data )?;
 
         Ok(())
     }
