@@ -26,3 +26,6 @@ pnpm-lock.yaml
 
 /*.lock
 *.exe
+*.id*
+*.nam
+*.til

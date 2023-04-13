@@ -174,7 +174,7 @@ class App extends Component {
 				<div id="main">
 					<Form id="content" layout="vertical" fluid>
 						<Form.Group controlId="version" id="version-group">
-							<Form.ControlLabel>Roblox Executable</Form.ControlLabel>
+							<Form.ControlLabel>Studio Executable</Form.ControlLabel>
 							<InputGroup>
 								<InputGroup.Addon>
 									<Search />
