@@ -180,16 +180,10 @@ impl ThemesPatch {
         // add rax, ????
         {
             let mut inst = Instruction::new();
+            let data = [ 0x48, 0x8B, 0x05, 0x00, 0x00, 0x00, 0x00 ];
 
-            inst.set_code( Code::Mov_r64_rm64 );
-            inst.set_op0_kind( OpKind::Register );
-            inst.set_op0_register( Register::RAX );
-            inst.set_op1_kind( OpKind::Memory );
-            inst.set_memory_base( Register::RIP );
-            inst.set_memory_index( Register::None );
-
-            let size = encoder.encode( &inst, 0 )? as u64;
-            encoder.set_buffer( Vec::new() );
+            let mut decoder = Decoder::with_ip( 64, &data, text_rva as u64 + theme_load_addr as u64, DecoderOptions::NONE );
+            decoder.decode_out( &mut inst );
             out_inst.push( inst );
 
             let mut inst = Instruction::new();
@@ -197,10 +191,10 @@ impl ThemesPatch {
             inst.set_op0_kind( OpKind::Register );
             inst.set_op0_register( Register::RAX );
             inst.set_op1_kind( OpKind::Immediate32to64 );
-            inst.set_immediate32to64( offset as i64 - size as i64 );
+            inst.set_immediate32to64( offset as i64 - data.len() as i64 );
 
             out_inst.push( inst );
-        };
+        }
 
         // mov start, rax
         {
@@ -262,7 +256,7 @@ impl ThemesPatch {
         for inst in out_inst {
             encoder.encode( &inst, theme_load_addr as u64)?;
         }
-    
+        
         let mut inst_buf = encoder.take_buffer();
         let mut data_buf = Vec::from_iter( std::iter::repeat( 0x90 ).take( THEME_LOAD_LEN.clone() - inst_buf.len() ) );
         inst_buf.append( &mut data_buf );
