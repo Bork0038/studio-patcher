@@ -165,25 +165,61 @@ impl ThemesPatch {
                     | inst | Ok( inst )
                 )?;
 
-            // let mut out = String::new();
-            // FastFormatter::new().format( inst, &mut out );
-            // println!("{} {}", out, inst.code().op_code().instruction_string() );
-      
             if inst.op0_kind() != OpKind::Memory {
                 Err("Instruction op0 not memory" )
             } else {
                 Ok( inst ) 
             }
         }?;
+
+        let offset = themes_rva - ( text_rva + theme_load_addr as u32 );
+        let mut encoder = Encoder::new( 64 );
+
+        let mut out_inst = Vec::new();
+        // mov rax, [rip+????]
+        {
+            let mut inst = Instruction::new();
+
+            inst.set_code( Code::Mov_r64_rm64 );
+            inst.set_op0_kind( OpKind::Register );
+            inst.set_op0_register( Register::RAX );
+            inst.set_op1_kind( OpKind::Memory );
+            inst.set_memory_base( Register::RIP );
+            inst.set_memory_displ_size( 8 );
+
+            let size = encoder.encode( &inst, 0 )? as u64;
+            encoder.set_buffer( Vec::new() );
+
+            inst.set_memory_displacement64( offset as u64 + size + section.len() as u64 );
+            out_inst.push( inst );
+        };
+
+        // mov start, rax
+        {
+            let mut inst = Instruction::new();
+
+            inst.set_code( Code::Mov_rm64_r64 );
+            inst.set_op0_kind( OpKind::Register );
+            inst.set_op0_register( start_register );
+            inst.set_op1_kind( OpKind::Register );
+            inst.set_op1_register( Register::RAX );
+
+            out_inst.push( inst );
+        }
+
+        // mov [static], rax
+        {
+            let mut inst = Instruction::new();
+
+            inst.set_code( Code::Mov_rm64_r64 );
+            inst.set_op0_kind( OpKind::Register );
+            // inst.set_op0_register( static_start_register );
+            inst.set_op1_kind( OpKind::Register );
+            inst.set_op1_register( Register::RAX );
+
+            out_inst.push( inst );
+        }
         
-       let mut inst = Instruction::new();
-        inst.set_code( Code::Mov_r64_rm64 );
-
-
-        
-     
-    
-
         // for i in 0..THEME_LOAD_LEN.clone() {
         //     text_data[ theme_load_addr + i ] = 0x90;
         // }
