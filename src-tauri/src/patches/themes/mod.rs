@@ -174,9 +174,10 @@ impl ThemesPatch {
 
         let offset = themes_rva - ( text_rva + theme_load_addr as u32 );
         let mut encoder = Encoder::new( 64 );
-
         let mut out_inst = Vec::new();
-        // mov rax, [rip+????]
+
+        // mov rax, [rip]
+        // add rax, ????
         {
             let mut inst = Instruction::new();
 
@@ -185,12 +186,19 @@ impl ThemesPatch {
             inst.set_op0_register( Register::RAX );
             inst.set_op1_kind( OpKind::Memory );
             inst.set_memory_base( Register::RIP );
-            inst.set_memory_displ_size( 8 );
+            inst.set_memory_index( Register::None );
 
             let size = encoder.encode( &inst, 0 )? as u64;
             encoder.set_buffer( Vec::new() );
+            out_inst.push( inst );
 
-            inst.set_memory_displacement64( offset as u64 + size + section.len() as u64 );
+            let mut inst = Instruction::new();
+            inst.set_code( Code::Add_rm64_imm32 );
+            inst.set_op0_kind( OpKind::Register );
+            inst.set_op0_register( Register::RAX );
+            inst.set_op1_kind( OpKind::Immediate32to64 );
+            inst.set_immediate32to64( offset as i64 - size as i64 );
+
             out_inst.push( inst );
         };
 
@@ -212,18 +220,78 @@ impl ThemesPatch {
             let mut inst = Instruction::new();
 
             inst.set_code( Code::Mov_rm64_r64 );
-            inst.set_op0_kind( OpKind::Register );
-            // inst.set_op0_register( static_start_register );
+            inst.set_op0_kind( OpKind::Memory );
+            inst.set_memory_base( static_start_register.memory_base() );
+            inst.set_memory_displ_size( static_start_register.memory_displ_size() );
+            inst.set_memory_displacement64( static_start_register.memory_displacement64() );
+            inst.set_memory_index( static_start_register.memory_index() );
+            inst.set_memory_index_scale( static_start_register.memory_index_scale() );
             inst.set_op1_kind( OpKind::Register );
             inst.set_op1_register( Register::RAX );
 
             out_inst.push( inst );
         }
-        
-        // for i in 0..THEME_LOAD_LEN.clone() {
-        //     text_data[ theme_load_addr + i ] = 0x90;
-        // }
 
+        // mov end, rax
+        {
+            let mut inst = Instruction::new();
+
+            inst.set_code( Code::Mov_rm64_r64 );
+            inst.set_op0_kind( OpKind::Register );
+            inst.set_op0_register( end_register );
+            inst.set_op1_kind( OpKind::Register );
+            inst.set_op1_register( Register::RAX );
+
+            out_inst.push( inst );
+        }
+
+        // add end, offset
+        {
+            let mut inst = Instruction::new();
+
+            inst.set_code( Code::Add_rm64_imm32 );
+            inst.set_op0_kind( OpKind::Register );
+            inst.set_op0_register( end_register );
+            inst.set_op1_kind( OpKind::Immediate32to64 );
+            inst.set_immediate32to64( offset_map.len() as i64 * 8 );
+
+            out_inst.push( inst );
+        }
+
+        let mut encoder = Encoder::new( 64 );
+        for inst in out_inst {
+            encoder.encode( &inst, theme_load_addr as u64)?;
+        }
+    
+        let mut inst_buf = encoder.take_buffer();
+        let mut data_buf = Vec::from_iter( std::iter::repeat( 0x90 ).take( THEME_LOAD_LEN.clone() - inst_buf.len() ) );
+        inst_buf.append( &mut data_buf );
+        
+        for i in 0..inst_buf.len() {
+            text_data[ theme_load_addr + i ] = inst_buf[ i ];
+        }
+
+
+        // shift the theme load loop back by ?? bytes to add space for more instructions
+        const PADDING_BYTES: usize = 20;
+
+        let loop_start = theme_load_addr + THEME_LOAD_LEN.clone();
+        let mut loop_end = loop_start;
+        while &text_data[ loop_end..loop_end + 4 ] != &[ 0x48, 0x8B, 0xD0, 0x48 ] {
+            loop_end += 1;
+        }
+
+        let loop_size = loop_end - loop_start + 3;
+        for i in 0..loop_size {
+            let i = loop_size - i - 1;
+
+            text_data[ loop_start - PADDING_BYTES - loop_size - 1 + i ] = text_data[ loop_start + i ];
+            text_data[ loop_start + i ] = 0x90;
+        }
+        
+        let new_offset = text_data[ loop_start + loop_size - PADDING_BYTES ];
+
+        bin.set_section_data( ".text", text_data )?;
         // let offset = themes_rva - ( text_rva + theme_load_addr as u32 );
         // let theme_array_offset = offset + 3 + section.len() as u32;
 
@@ -248,26 +316,6 @@ impl ThemesPatch {
         //     index += 1;
         // };
 
-        // // shift the theme load loop back by ?? bytes to add space for more instructions
-        // const PADDING_BYTES: usize = 20;
-
-        // let loop_start = theme_load_addr + THEME_LOAD_LEN.clone();
-        // let mut loop_end = loop_start;
-        // while &text_data[ loop_end..loop_end + 4 ] != &[ 0x48, 0x8B, 0xD0, 0x48 ] {
-        //     loop_end += 1;
-        // }
-
-        // let loop_size = loop_end - loop_start + 3;
-        // for i in 0..loop_size {
-        //     let i = loop_size - i - 1;
-
-        //     text_data[ loop_start - PADDING_BYTES - loop_size - 1 + i ] = text_data[ loop_start + i ];
-        //     text_data[ loop_start + i ] = 0x90;
-        // }
-        
-        // let new_offset = text_data[ loop_start + loop_size - PADDING_BYTES ];
-
-        // bin.set_section_data( ".text", text_data )?;
 
         Ok(())
     }

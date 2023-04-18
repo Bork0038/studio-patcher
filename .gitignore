@@ -29,3 +29,4 @@ pnpm-lock.yaml
 *.id*
 *.nam
 *.til
+*.i64
