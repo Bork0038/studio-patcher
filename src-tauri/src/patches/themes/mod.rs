@@ -286,6 +286,26 @@ impl ThemesPatch {
             inst.set_memory_base( reg_1 );
    
             out_inst.push( inst );
+
+            // push rdx
+            let mut inst = Instruction::new();
+    
+            inst.set_code( Code::Push_rm64 );
+            inst.set_op0_kind( OpKind::Register );
+            inst.set_op0_register( reg_0 );
+
+            out_inst.push( inst );
+
+            // mov rdx, rsp
+            let mut inst = Instruction::new();
+    
+            inst.set_code( Code::Mov_r64_rm64 );
+            inst.set_op0_kind( OpKind::Register );
+            inst.set_op0_register( reg_0 );
+            inst.set_op1_kind( OpKind::Register );
+            inst.set_op1_register( Register::RSP );
+
+            out_inst.push( inst );
         }
 
         let mut encoder = Encoder::new( 64 );
@@ -306,7 +326,7 @@ impl ThemesPatch {
         for offset in offset_map {
             let offset = (themes_rva as u64 + offset ) - rip as u64;
          
-            section.append( &mut (offset + 3).to_le_bytes().to_vec() );
+            section.append( &mut (offset + 8).to_le_bytes().to_vec() );
         }
      
         bin.set_section_data( ".themes", section )?;
