@@ -157,7 +157,7 @@ impl ThemesPatch {
             
         }?;
 
-        let offset = themes_rva - ( text_rva + theme_load_addr as u32 );
+        let offset = themes_rva - ( text_rva + theme_load_addr as u32 ) - 7 ;
         let mut encoder = Encoder::new( 64 );
         let mut out_inst = Vec::new();
 
@@ -179,7 +179,7 @@ impl ThemesPatch {
             inst.set_op0_kind( OpKind::Register );
             inst.set_op0_register( Register::RAX );
             inst.set_op1_kind( OpKind::Immediate32to64 );
-            inst.set_immediate32to64( offset as i64 + section.len() as i64 * 8 );
+            inst.set_immediate32to64( offset as i64 + section.len() as i64 );
 
             out_inst.push( inst );
         }
@@ -259,30 +259,32 @@ impl ThemesPatch {
                     | inst | Ok( inst )
                 )?;
 
-
-            // mov reg, [rax]
-            let mut inst = Instruction::new();
-    
-            inst.set_code( Code::Mov_r64_rm64 );
-            inst.set_op0_kind( OpKind::Register );
-            inst.set_op0_register( instruction.op0_register() );
-            inst.set_op1_kind( OpKind::Memory );
-            inst.set_memory_index( Register::None );
-            inst.set_memory_base( instruction.op1_register() );
-
-            out_inst.push( inst );
-                
-            // add rax, [rip]
+            let reg_0 = instruction.op0_register();
+            let reg_1 = instruction.op1_register();
+           
+            // mov reg, [rip]
             let mut inst = Instruction::new();
 
-            inst.set_code( Code::Add_r64_rm64 );
+            inst.set_code( Code::Lea_r64_m );
             inst.set_op0_kind( OpKind::Register );
-            inst.set_op0_register( Register::RDX );
+            inst.set_op0_register( reg_0 );
             inst.set_op1_kind( OpKind::Memory );
             inst.set_memory_index( Register::None );
             inst.set_memory_base( Register::RIP );
             inst.set_memory_displacement64( 7 );
+            
+            out_inst.push( inst );
 
+            // add reg, [rax]     
+            let mut inst = Instruction::new();
+
+            inst.set_code( Code::Add_r64_rm64 );
+            inst.set_op0_kind( OpKind::Register );
+            inst.set_op0_register( reg_0 );
+            inst.set_op1_kind( OpKind::Memory );
+            inst.set_memory_index( Register::None );
+            inst.set_memory_base( reg_1 );
+   
             out_inst.push( inst );
         }
 
@@ -302,11 +304,10 @@ impl ThemesPatch {
 
         let rip = text_rva + (theme_load_addr + inst_size) as u32;
         for offset in offset_map {
-            let offset = (themes_rva + offset as u32) - rip;
-
-            section.append( &mut offset.to_le_bytes().to_vec() );
+            let offset = (themes_rva as u64 + offset ) - rip as u64;
+         
+            section.append( &mut (offset + 3).to_le_bytes().to_vec() );
         }
-        section.append( &mut Vec::from([ 0xFF; 8 ]));
      
         bin.set_section_data( ".themes", section )?;
         bin.set_section_data( ".text", text_data )?;
