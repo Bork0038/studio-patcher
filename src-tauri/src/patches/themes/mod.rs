@@ -344,48 +344,33 @@ impl ThemesPatch {
                 | addr | Ok( addr )
             )?;
 
-        let jnz_rip = addr as u64 + text_rva as u64;
-        let mut jnz_insts = ThemesPatch::decode_instructions(  &text_data[ addr..addr + THEME_JNZ_LEN.clone() ], jnz_rip + 3 );
+        let jnz_rip = addr as u64 + text_rva as u64 + 3;
+        let mut jnz_insts = ThemesPatch::decode_instructions(  &text_data[ addr..addr + THEME_JNZ_LEN.clone() ], jnz_rip );
         
-        let original_addr = theme_load_addr + THEME_LOAD_LEN.clone() - 3;
+        let original_addr = theme_load_addr + THEME_LOAD_LEN.clone();
         let new_addr = theme_load_addr + inst_size;
         let addr_offset = original_addr - new_addr;
 
-        let jnz_inst = instructions
+        let jnz_inst = jnz_insts
             .get_mut( 1 )
             .map_or(
                 Err("Failed to find instruction"),
                 | inst | Ok( inst )
             )?;
 
-        // let mut f = FastFormatter::new();
-        // for inst in jnz_insts.iter() { 
-        //     let mut s = String::new();
-        //     f.format( &inst, &mut s );
-        //     println!("{}", s)
-        // }
-            
-        jnz_inst.set_ip( jnz_rip + 3);
-        println!("{:02X}", addr_offset);
-        println!("{:02X}", jnz_rip);
-        println!("{:02X}", jnz_inst.near_branch64() - addr_offset as u64);
-        println!("{:02X}", jnz_inst.near_branch64());
-        jnz_insts[1].set_near_branch64( jnz_inst.near_branch64() - addr_offset as u64 );
-        
-        encoder.encode( &jnz_insts[1], jnz_rip )?;
-
-        for i in encoder.take_buffer() {
-            println!("{:02X}", i );
+        jnz_inst.set_near_branch64( jnz_inst.near_branch64() - addr_offset as u64 );
+       
+        for inst in jnz_insts {
+            encoder.encode( &inst, jnz_rip )?;
         }
-        // let mut f = FastFormatter::new();
-        // for inst in jnz_insts { 
-        //     let mut s = String::new();
-        //     f.format( &inst, &mut s );
-        //     println!("{}", s)
-        // }
-        
-        // bin.set_section_data( ".themes", section )?;
-        // bin.set_section_data( ".text", text_data )?;
+
+        let jnz_data = encoder.take_buffer();
+        for i in 0..jnz_data.len() {
+            text_data[ addr + i ] = jnz_data[ i ];
+        }
+
+        bin.set_section_data( ".themes", section )?;
+        bin.set_section_data( ".text", text_data )?;
         
         Ok(())
     }
