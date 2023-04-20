@@ -10,7 +10,8 @@ pub use binary::{ Binary, Section };
 async fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
-            commands::install_patches
+            commands::install_patches,
+            commands::restore_binary
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

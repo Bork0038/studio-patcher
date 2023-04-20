@@ -22,6 +22,7 @@ positioned-io = "0.3.1"
 num-traits = "0.2.15"
 object = { version = "0.30.3", features = ["write"] }
 iced-x86 = "1.18.0"
+reqwest = "0.11.16"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
