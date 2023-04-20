@@ -14,12 +14,13 @@ use iced_x86::{ Decoder, DecoderOptions, Instruction, Code, OpKind,  Encoder, Fa
 pub struct ThemesPatch;
 
 lazy_static! {
-    static ref PATCHES: Vec<PatchType> = vec![
-        
-    ];
+    static ref PATCHES: Vec<PatchType> = vec![ ];
 
     static ref THEME_LOAD_PAT: &'static str = "41 8D 57 2B 48 8D 0D ?? ?? ?? ?? FF 15 ?? ?? ?? ?? 48 89 85 00 01 00 00 41 8D 57 2A 48 8D 0D ?? ?? ?? ?? FF 15 ?? ?? ?? ?? 48 89 85 08 01 00 00 41 8D 57 02 48 8D 8D 70 01 00 00 E8 ?? ?? ?? ?? 4C 8B F0 48 89 85 70 01 00 00 4C 8D 78 10 4C 89 BD 80 01 00 00 48 8B F8 48 8D 9D 00 01 00 00 0F 1F 44 00 00 48 8B D3 48 8B CF FF 15 ?? ?? ?? ?? 48 83 C7 08 48 83 C3 08 48 8D 85 10 01 00 00 48 3B D8 75 E0 48 89 BD A0 01 00 00 48 89 BD 78 01 00 00 4C 8B 0D ?? ?? ?? ?? BA 08 00 00 00 44 8D 42 FA 48 8D 8D 00 01 00 00 E8 ?? ?? ?? ?? 49 8B C6 48 89 45 60 4C 3B F7 0F 84 10 0F 00 00 48 BB B3 01 00 00 00 01 00 00 0F 1F 40 00 0F 1F 84 00 00 00 00 00 48 8B D0";
     static ref THEME_LOAD_LEN: usize = THEME_LOAD_PAT.split_whitespace().count();
+
+    static ref THEME_JNZ_PAT: &'static str = "48 3B C7 0F 85 14 F1 FF FF 4C 8B B5 70 01 00 00 4C 8B BD 80 01 00 00 4D 85 F6";
+    static ref THEME_JNZ_LEN: usize = THEME_JNZ_PAT.split_whitespace().count();
 }
 
 impl ThemesPatch {
@@ -29,6 +30,20 @@ impl ThemesPatch {
             name: "themes".into(),
             patch: ThemesPatch::patch
         }
+    }
+
+    pub fn decode_instructions<Data: AsRef<[u8]>>( data: Data, rip: u64 ) -> Vec<Instruction> {
+        let mut insts = Vec::new();
+
+        let mut decoder = Decoder::with_ip( 64, data.as_ref(), rip, DecoderOptions::NONE );
+        while decoder.can_decode() {
+            let mut instruction = Instruction::new();
+            decoder.decode_out( &mut instruction );
+
+            insts.push( instruction );
+        }
+
+        insts
     }
 
     pub fn patch( binary: Rc<RefCell<Binary>> ) -> Result<(), Box<dyn Error>> {
@@ -105,25 +120,7 @@ impl ThemesPatch {
         let rip = text_rva as u64 + theme_load_addr as u64;
         let mut text_data = text_section.data;
 
-        let mut instructions = {
-            let mut instructions = Vec::new();
-
-            let mut decoder = Decoder::with_ip( 
-                64, 
-                &text_data[ theme_load_addr..theme_load_addr + THEME_LOAD_LEN.clone() ], 
-                rip, 
-                DecoderOptions::NONE
-            );
-            
-            while decoder.can_decode() {
-                let mut instruction = Instruction::new();
-                decoder.decode_out( &mut instruction );
-    
-                instructions.push( instruction );
-            }
-
-            instructions
-        };
+        let mut instructions = ThemesPatch::decode_instructions( &text_data[ theme_load_addr..theme_load_addr + THEME_LOAD_LEN.clone() ], rip );
 
         // find registers needed
         let start_register = {
@@ -250,7 +247,7 @@ impl ThemesPatch {
             out_inst.push( *inst );
         }
 
-
+        let mut loop_insts = Vec::new();
         {
             let instruction = instructions
                 .get( 40 )
@@ -272,8 +269,8 @@ impl ThemesPatch {
             inst.set_memory_index( Register::None );
             inst.set_memory_base( Register::RIP );
             inst.set_memory_displacement64( 7 );
-            
-            out_inst.push( inst );
+
+            loop_insts.push( inst );
 
             // add reg, [rax]     
             let mut inst = Instruction::new();
@@ -285,7 +282,7 @@ impl ThemesPatch {
             inst.set_memory_index( Register::None );
             inst.set_memory_base( reg_1 );
    
-            out_inst.push( inst );
+            loop_insts.push( inst );
 
             // push rdx
             let mut inst = Instruction::new();
@@ -294,7 +291,7 @@ impl ThemesPatch {
             inst.set_op0_kind( OpKind::Register );
             inst.set_op0_register( reg_0 );
 
-            out_inst.push( inst );
+            loop_insts.push( inst );
 
             // mov rdx, rsp
             let mut inst = Instruction::new();
@@ -305,17 +302,28 @@ impl ThemesPatch {
             inst.set_op1_kind( OpKind::Register );
             inst.set_op1_register( Register::RSP );
 
-            out_inst.push( inst );
-        }
+            loop_insts.push( inst );
+        };
 
         let mut encoder = Encoder::new( 64 );
         for inst in out_inst {
             encoder.encode( &inst, 0 )?;
         }
-        
+            
         let mut inst_data = encoder.take_buffer();
+
+        for inst in loop_insts {
+            encoder.encode( &inst, 0 )?;
+        }
+        let mut loop_data = encoder.take_buffer();
+
         let inst_size = inst_data.len();
-        let mut data_buf = Vec::from_iter( std::iter::repeat( 0x90 ).take( THEME_LOAD_LEN.clone() - inst_size ) );
+        let loop_size = loop_data.len();
+
+        let mut data_buf = Vec::from_iter( 
+            std::iter::repeat( 0x90 ).take( THEME_LOAD_LEN.clone() - inst_size - loop_size ) 
+        );
+        inst_data.append( &mut loop_data );
         inst_data.append( &mut data_buf );
 
         for i in 0..inst_data.len() {
@@ -328,79 +336,57 @@ impl ThemesPatch {
          
             section.append( &mut (offset + 8).to_le_bytes().to_vec() );
         }
-     
-        bin.set_section_data( ".themes", section )?;
-        bin.set_section_data( ".text", text_data )?;
 
+        // move address of jnz
+        let addr = bin.scan( &IDAPat::new( THEME_JNZ_PAT.clone() ), Some(".text") ) 
+            .map_or(
+                Err("Failed to find theme jnz"),
+                | addr | Ok( addr )
+            )?;
+
+        let jnz_rip = addr as u64 + text_rva as u64;
+        let mut jnz_insts = ThemesPatch::decode_instructions(  &text_data[ addr..addr + THEME_JNZ_LEN.clone() ], jnz_rip + 3 );
         
-        // let mut formatter = FastFormatter::new();
-        // for (index, instruction) in instructions.iter().enumerate() {
-        //     let mut string = String::new();
-        //     formatter.format( &instruction, &mut string );
+        let original_addr = theme_load_addr + THEME_LOAD_LEN.clone() - 3;
+        let new_addr = theme_load_addr + inst_size;
+        let addr_offset = original_addr - new_addr;
 
-        //     println!("[{}] {}", index, string)
+        let jnz_inst = instructions
+            .get_mut( 1 )
+            .map_or(
+                Err("Failed to find instruction"),
+                | inst | Ok( inst )
+            )?;
+
+        // let mut f = FastFormatter::new();
+        // for inst in jnz_insts.iter() { 
+        //     let mut s = String::new();
+        //     f.format( &inst, &mut s );
+        //     println!("{}", s)
         // }
-        // // mov [static], rax
-        // {
-        //     let mut inst = Instruction::new();
+            
+        jnz_inst.set_ip( jnz_rip + 3);
+        println!("{:02X}", addr_offset);
+        println!("{:02X}", jnz_rip);
+        println!("{:02X}", jnz_inst.near_branch64() - addr_offset as u64);
+        println!("{:02X}", jnz_inst.near_branch64());
+        jnz_insts[1].set_near_branch64( jnz_inst.near_branch64() - addr_offset as u64 );
+        
+        encoder.encode( &jnz_insts[1], jnz_rip )?;
 
-        //     inst.set_code( Code::Mov_rm64_r64 );
-        //     inst.set_op0_kind( OpKind::Memory );
-        //     inst.set_memory_base( static_start_register.memory_base() );
-        //     inst.set_memory_displ_size( static_start_register.memory_displ_size() );
-        //     inst.set_memory_displacement64( static_start_register.memory_displacement64() );
-        //     inst.set_memory_index( static_start_register.memory_index() );
-        //     inst.set_memory_index_scale( static_start_register.memory_index_scale() );
-        //     inst.set_op1_kind( OpKind::Register );
-        //     inst.set_op1_register( Register::RAX );
-
-        //     out_inst.push( inst );
-        // }
-
-
-        // shift the theme load loop back by ?? bytes to add space for more instructions
-        // const PADDING_BYTES: usize = 20;
-
-        // let loop_start = theme_load_addr + THEME_LOAD_LEN.clone();
-        // let mut loop_end = loop_start;
-        // while &text_data[ loop_end..loop_end + 4 ] != &[ 0x48, 0x8B, 0xD0, 0x48 ] {
-        //     loop_end += 1;
-        // }
-
-        // let loop_size = loop_end - loop_start + 3;
-        // for i in 0..loop_size {
-        //     let i = loop_size - i - 1;
-
-        //     text_data[ loop_start - PADDING_BYTES - loop_size - 1 + i ] = text_data[ loop_start + i ];
-        //     text_data[ loop_start + i ] = 0x90;
+        for i in encoder.take_buffer() {
+            println!("{:02X}", i );
+        }
+        // let mut f = FastFormatter::new();
+        // for inst in jnz_insts { 
+        //     let mut s = String::new();
+        //     f.format( &inst, &mut s );
+        //     println!("{}", s)
         // }
         
-        // let new_offset = text_data[ loop_start + loop_size - PADDING_BYTES ];
-        // let offset = themes_rva - ( text_rva + theme_load_addr as u32 );
-        // let theme_array_offset = offset + 3 + section.len() as u32;
-
-
-        // load theme array start and end sections
-        // let mut patch = vec![
-        //     0x48, 0x8b, 0x05, 0x00, 0x00, 0x00, 0x00, // mov rax, [rip]
-        //     0x48, 0x05, // add rax, ????
-        //     0x49, 0x89, 0xc6  // mov r14, rax
-        // ];
-        // patch.append( &mut u32::to_le_bytes( theme_array_offset ).to_vec() );
-
-        // patch.append( &mut vec![ 
-        //     0x48, 0x89, 0xC7, // mov rdi, rax
-        //     0x48, 0x81, 0xC7 // add rdi ????
-        // ]);
-        // patch.append( &mut u32::to_le_bytes( (offset_map.len() * 8) as u32 ).to_vec() );
-
-        // let mut index = 0;
-        // for i in 0..patch.len() { 
-        //     text_data[ theme_load_addr + index ] = patch[i];
-        //     index += 1;
-        // };
-
-
+        // bin.set_section_data( ".themes", section )?;
+        // bin.set_section_data( ".text", text_data )?;
+        
         Ok(())
     }
 
