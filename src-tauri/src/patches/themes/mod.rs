@@ -305,6 +305,17 @@ impl ThemesPatch {
             loop_insts.push( inst );
         };
 
+        {
+            let mut inst = Instruction::new();
+            inst.set_code( Code::Sub_r64_rm64 );
+            inst.set_op0_kind( OpKind::Register );
+            inst.set_op0_register( Register::RSP );
+            inst.set_op1_kind( OpKind::Immediate32to64 );
+            inst.set_immediate32to64( 8 );
+
+            loop_insts.push( inst );
+        }
+
         let mut encoder = Encoder::new( 64 );
         for inst in out_inst {
             encoder.encode( &inst, 0 )?;
