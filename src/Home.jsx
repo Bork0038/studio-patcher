@@ -14,6 +14,7 @@ import {
 
 import { Search, Global } from "@rsuite/icons";
 import { dialog, invoke, process, window, event } from "@tauri-apps/api";
+import { WebviewWindow } from '@tauri-apps/api/window'
 
 import "./Home.css";
 import "rsuite/styles/index.less";
@@ -33,30 +34,38 @@ class App extends Component {
 			robloxPath: "",
 			version: "",
 			patches: [
-				{
-					name: "internal-studio",
-					title: "Internal Studio",
-					description: "Enables Roblox's Internal Studio mode. Gives access to features such as FFlag editor, additional plugins...",
-				},
-				{
-					name: "extended-explorer",
-					title: "Extended Explorer",
-					description: "Shows hidden properties and instances in the Studio explorer",
-				},
 				// {
-				// 	name: "themes",
-				// 	title: "Themes",
-				// 	description: "Adds more themes to studio"
+				// 	name: "internal-studio",
+				// 	title: "Internal Studio",
+				// 	description: "Enables Roblox's Internal Studio mode. Gives access to features such as FFlag editor, additional plugins...",
 				// },
+				// {
+				// 	name: "extended-explorer",
+				// 	title: "Extended Explorer",
+				// 	description: "Shows hidden properties and instances in the Studio explorer",
+				// },
+				{
+					name: "themes",
+					title: "Themes",
+					description: "Adds more themes to studio"
+				},
 				// {
 				// 	name: "disable-telemetry",
 				// 	title: "Disable Telemetry",
 				// 	description: "It disables telemetry "
 				// }
-			]
+			],
+			refs: {
+				tools: React.createRef()
+			},
 		}
 
+        this.handleClick     = this.handleClick.bind(this);
+		this.openWindow		 = this.openWindow.bind(this);
+		this.openTab         = this.openTab.bind(this);
+		this.onHover         = this.onHover.bind(this);
 		this.openFileDialog = this.openFileDialog.bind( this );
+		this.restoreBinary  = this.restoreBinary.bind(this);
 		this.maximize  		= this.maximize.bind( this );
 		this.minimize		= this.minimize.bind( this );
 		this.submit			= this.submit.bind( this );
@@ -113,6 +122,47 @@ class App extends Component {
 		)
 	}
 
+	async restoreBinary() {
+		if ( this.state.robloxPath == "" ) {
+			return toaster.push(
+				<Message showIcon type="error">
+					Executable path cannot be empty
+				</Message>
+			)
+		}
+
+		const loader = document.getElementById("loading-screen");
+		event.once( "restored_version", eventData => {
+			const { payload } = eventData;
+
+			loader.style.visibility = "hidden";
+			if ( !payload.success ) {
+				return toaster.push(
+					<Message showIcon type="error">
+						Failed to restore studio { payload.data }
+					</Message>
+				)
+			} else {
+				return toaster.push(
+					<Message showIcon type="success">
+						Successfully restored studio
+					</Message>
+				)
+			}
+		})
+
+		loader.style.visibility = "visible";
+		await invoke(
+			"restore_version",
+			{
+				patches: {
+					path: this.state.robloxPath,
+					version: document.getElementById("restore-version").value,
+				}
+			}
+		)
+	}
+
 	async openFileDialog() {
 		const data = await dialog.open({
 			filters: [{
@@ -146,14 +196,85 @@ class App extends Component {
 		this.setState();
 	}
 
+	componentDidMount() {
+		this.setState({
+			tabs: {
+				tools: document.getElementById('tools-tab'),
+			}
+		})
+
+		document.addEventListener('mousedown', this.handleClick);
+	}
+
+	openTab(tab) {
+		for (let tabName in this.state.tabs) {
+			let entry = this.state.tabs[tabName];
+			
+			entry.style.visibility = tabName == tab ? 'visible' : 'hidden';
+
+			if (tabName == tab) {
+				if (this.state.openTab == entry) {
+					entry.style.visibility = 'hidden';
+					this.setState({
+						openTab: null,
+					})
+					this.openRef = null;
+				} else {
+					this.setState({
+						openTab: entry
+					})
+					this.openRef = this.state.refs[tabName];
+				}
+			}
+		}
+    }
+
+	openWindow(location) {
+		const webview = new WebviewWindow( location, {
+			url: location,
+			decorations: false	
+		});
+		webview.show();
+	}
+
+	handleClick(event) {
+		if (this.openRef && !this.openRef.current.contains(event.target)) {
+			this.state.openTab.style.visibility = 'hidden';
+			this.setState({
+				openTab: null
+			})
+			this.openRef = null;
+		}
+	}
+
+    onHover(tab) {
+		if (this.state.openTab && this.state.tabs[tab] != this.state.openTab) {
+			this.openTab(tab);
+		}
+	}
+
+
 	render() {
 		return (
 			<CustomProvider id="wrapper" theme="dark">
+				<div id="tabs">
+					<div id='tools-tab' ref={this.state.refs.tools}>
+						<button class='tab-entry' onClick={() => this.openWindow("/http")}>
+							<p class='tab-title'>HTTP Spy</p>
+						</button>
+						<button class='tab-entry' onClick={() => this.openWindow("/")}>
+							<p class='tab-title'>RakNet Spy</p>
+						</button>
+					</div>
+				</div>
 				<div id='title'>
 					<p id='title-text'>Studio Patcher</p>
 					<div id='title-left'>
 						<div id='icon-wrapper'>
 							<img id='icon' src={icon} />
+						</div>
+						<div id='navigation-wrapper'>
+							<button id='tools' class='button-left' onMouseOver={() => this.onHover('tools')} onClick={() => this.openTab('tools')}>Tools</button>
 						</div>
 					</div>
 					<div id='title-right'>
@@ -210,8 +331,8 @@ class App extends Component {
 								<InputGroup.Addon>
 									<Global />
 								</InputGroup.Addon>
-								<Form.Control id="restore-version" placeholder="Roblox Version"></Form.Control>
-								<Button id="restore">Restore Executable</Button>
+								<Form.Control id="restore-version" placeholder="Version"></Form.Control>
+								<Button id="restore" onClick={this.restoreBinary}>Restore Executable</Button>
 							</InputGroup>
 						</Form.Group>
 					</Form>
