@@ -6,11 +6,16 @@ import {
 } from "react-router-dom"
 
 import App from "./Home";
+import HttpSpy from "./HttpSpy";
 
 const router = createBrowserRouter([
 	{
 		path: "/",
 		element: <App />
+	},
+	{
+		path: "/http",
+		element: <HttpSpy />
 	}
 ])
 
