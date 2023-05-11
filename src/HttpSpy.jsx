@@ -1,6 +1,7 @@
 import { Component } from "react";
 import { invoke, event } from "@tauri-apps/api";
 import { CustomProvider, Table, Button, Divider } from "rsuite";
+import NetworkStream from "./classes/stream";
 
 import "./HttpSpy.css";
 import "rsuite/styles/index.less";
@@ -10,8 +11,6 @@ import closeIcon from './assets/close.png';
 import maxIcon from './assets/max.png';
 import minIcon from './assets/min.png';
 import icon from "./assets/icon.png";
-
-let started = false;
 
 class HttpSpy extends Component {
 
@@ -25,6 +24,15 @@ class HttpSpy extends Component {
 
         event.listen("http-data", (req) => {
             let data = req.payload;
+
+            let stream = new NetworkStream( data );
+
+            let url = stream.readString16();
+            let host = stream.readString16();
+            let method = stream.readString8();
+            let protocol = stream.readString8();
+
+            console.log(url, host, method);
         });
 
         this.onRowClick = this.onRowClick.bind(this);
@@ -38,22 +46,17 @@ class HttpSpy extends Component {
 
     componentDidMount() {
         {
-            if (!started) {
-                started = true;
-                (async () => {
-                    await invoke(
-                        "register_server",
-                        {
-                            serverInfo: {
-                                server_type: "http",
-                                server_port: 0
-                            }
+            (async () => {
+                await invoke(
+                    "register_server",
+                    {
+                        serverInfo: {
+                            server_type: "http",
+                            server_port: 0
                         }
-                    )
-                })();
-            }
-
-            
+                    }
+                )
+            })();
         }
     }
 

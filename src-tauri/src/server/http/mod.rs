@@ -17,6 +17,7 @@ use std::net::{
 };
 use std::convert::Infallible;
 use spdlog::prelude::*;
+use tokio::task::JoinHandle;
 
 pub struct HttpServer;
 
@@ -44,11 +45,11 @@ impl HttpServer {
         Ok( Response::new("".into()) )
     }
     
-    pub fn new( window: &Window ) {
+    pub fn new( window: &Window ) -> JoinHandle<()> {
         let app = window.app_handle();
         let name = window.label().to_string();
-        
-        spawn( async move {
+
+        let handle: JoinHandle<()> = spawn( async move {
             let app = app.clone();
             let name = name.clone();
 
@@ -57,7 +58,7 @@ impl HttpServer {
                 27773
             );
     
-            let make_service = make_service_fn(| con: &AddrStream | {
+            let make_service = make_service_fn(| _con: &AddrStream | {
                 let app = app.clone();
                 let name = name.clone();
 
@@ -79,6 +80,8 @@ impl HttpServer {
                 }
             }
         });
+
+        handle
     }
 
 }

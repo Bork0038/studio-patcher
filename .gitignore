@@ -30,3 +30,5 @@ pnpm-lock.yaml
 *.nam
 *.til
 *.i64
+/target/
+test-client/target/
