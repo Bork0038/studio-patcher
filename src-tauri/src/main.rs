@@ -3,6 +3,7 @@
 mod commands;
 mod binary;
 mod patches;
+mod server;
 
 pub use binary::{ Binary, Section };
 
@@ -11,7 +12,8 @@ async fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
             commands::install_patches,
-            commands::restore_binary
+            commands::restore_binary,
+            commands::register_server
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -23,6 +23,8 @@ num-traits = "0.2.15"
 object = { version = "0.30.3", features = ["write"] }
 iced-x86 = "1.18.0"
 reqwest = "0.11.16"
+hyper = { version = "0.14.26", features = ["server"] }
+spdlog-rs = "0.3.8"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

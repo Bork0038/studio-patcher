@@ -1,4 +1,5 @@
 import { Component } from "react";
+import { invoke, event } from "@tauri-apps/api";
 import { CustomProvider, Table, Button, Divider } from "rsuite";
 
 import "./HttpSpy.css";
@@ -10,25 +11,21 @@ import maxIcon from './assets/max.png';
 import minIcon from './assets/min.png';
 import icon from "./assets/icon.png";
 
+let started = false;
+
 class HttpSpy extends Component {
 
     constructor(props) {
         super(props);
 
         this.state = {
-            data: [
-                {
-                    method: "GET",
-                    host: "example.com",
-                    url: "/index.html",
-                    protocol: "https",
-                    headers: {
-                        "Origin": "https://example.com/a"
-                    }
-                }
-            ],
+            data: [],
             current: null,
         }
+
+        event.listen("http-data", (req) => {
+            let data = req.payload;
+        });
 
         this.onRowClick = this.onRowClick.bind(this);
     }
@@ -37,6 +34,27 @@ class HttpSpy extends Component {
         this.setState({
             current: row
         })
+    }
+
+    componentDidMount() {
+        {
+            if (!started) {
+                started = true;
+                (async () => {
+                    await invoke(
+                        "register_server",
+                        {
+                            serverInfo: {
+                                server_type: "http",
+                                server_port: 0
+                            }
+                        }
+                    )
+                })();
+            }
+
+            
+        }
     }
 
     render() {
