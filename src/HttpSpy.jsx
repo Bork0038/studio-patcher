@@ -1,5 +1,5 @@
 import { Component } from "react";
-import { CustomProvider, Table, Button } from "rsuite";
+import { CustomProvider, Table, Button, Divider } from "rsuite";
 
 import "./HttpSpy.css";
 import "rsuite/styles/index.less";
@@ -19,26 +19,24 @@ class HttpSpy extends Component {
             data: [
                 {
                     method: "GET",
-                    response: 200,
                     host: "example.com",
                     url: "/index.html",
-                    id: 0
-                },
+                    protocol: "https",
+                    headers: {
+                        "Origin": "https://example.com/a"
+                    }
+                }
             ],
-            current: {
-                method: "GET",
-                response: 200,
-                host: "example.com",
-                url: "/index.html",
-                id: 0
-            },
+            current: null,
         }
 
         this.onRowClick = this.onRowClick.bind(this);
     }
 
     onRowClick(row) {
-        console.log(row);
+        this.setState({
+            current: row
+        })
     }
 
     render() {
@@ -67,10 +65,6 @@ class HttpSpy extends Component {
                                 <Table.HeaderCell>Method</Table.HeaderCell>
                                 <Table.Cell dataKey="method" />
                             </Table.Column>
-                            <Table.Column width={65} resizable>
-                                <Table.HeaderCell>Result</Table.HeaderCell>
-                                <Table.Cell dataKey="response" />
-                            </Table.Column>
                             <Table.Column flexGrow={2} fullText resizable>
                                 <Table.HeaderCell>Host</Table.HeaderCell>
                                 <Table.Cell dataKey="host" />
@@ -84,7 +78,31 @@ class HttpSpy extends Component {
                     <div id="inspect-wrapper">
                         <div id="inspect-type">
                             <Button class="inspect-button">Headers</Button>
-                            <Button class="inspect-button">Response</Button>
+                            <Button class="inspect-button">Body</Button>
+                        </div>
+                        <div id="inspect-headers">
+                            <p class="inspect-header-title">General</p>
+                            <p class="inspect-header">
+                                <label>Request URL: </label>{
+                                        this.state.current ?
+                                        this.state.current.protocol + "://" +
+                                        this.state.current.host +
+                                        this.state.current.url : ""
+                                    }
+                            </p>
+                            <p class="inspect-header">
+                                <label>Request Method: </label>{ this.state.current ? this.state.current.method : "" }
+                            </p>
+                            <Divider />
+                            <p class="inspect-header-title">Request Headers</p>
+                            {
+                                this.state.current ?
+                                Object.keys( this.state.current.headers ).map(key => {
+                                    return <p class="inspect-header">
+                                        <label>{key}: </label>{this.state.current.headers[key]}
+                                    </p>
+                                }) : ""
+                            }
                         </div>
                     </div>
                 </div>

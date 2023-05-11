@@ -343,3 +343,39 @@ body, html, #root, #wrapper {
     color: #a4a9b3;
     text-align: left;
 }
+
+#inspect-headers {
+	width: 100%;
+	height: calc(100% - 40px);
+	position: relative;
+	padding-top: 5px;
+}
+
+.inspect-header {
+	width: 100%;
+	height: auto;
+}
+
+.inspect-header-title {
+	padding-left: 20px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	user-select: none;
+	color: #a4a9b3;
+	font-size: 13px;
+	font-weight: bold
+}
+
+.inspect-header {
+	width: 100%;
+	padding-left: 20px;
+	padding-right: 20px;
+	font-size: 12px;
+	color: #85878d;
+}
+
+.inspect-header label {
+	padding-right: 5px;
+	font-size: 13px;
+	color: #a4a9b3;
+}
