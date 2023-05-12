@@ -30,14 +30,16 @@ use std::{
         Ipv4Addr
     },
     convert::Infallible,
-    sync::Arc
+    sync::atomic::{ 
+        AtomicBool,
+        Ordering
+    }
 };
 use spdlog::prelude::*;
 use lazy_static::lazy_static;
 
 lazy_static! {
-    // this is retarded but it works
-    static ref current_thread: RwLock<JoinHandle<()>> = RwLock::new( spawn( async {} ) );
+    static ref started: AtomicBool = AtomicBool::new( false );
 }
 
 pub struct HttpServer;
@@ -69,41 +71,39 @@ impl HttpServer {
     pub async fn new( window: &Window ) {
         let app = window.app_handle();
         let name = window.label().to_string();
-        current_thread.read().await.abort();
 
-        let handle: JoinHandle<()> = spawn( async move {
-            let app = app.clone();
-            let name = name.clone();
+        if !started.load( Ordering::SeqCst ) {
+            started.store( true, Ordering::SeqCst );
 
-            let addr = SocketAddrV4::new(
-                Ipv4Addr::new( 0, 0, 0, 0 ),
-                27773
-            );
-    
-            let make_service = make_service_fn(| _con: &AddrStream | {
+            spawn( async move {
                 let app = app.clone();
                 let name = name.clone();
-
-                let service = service_fn( move | req | {
-                    HttpServer::handle_connection( app.clone(), name.clone(), req )
+    
+                let addr = SocketAddrV4::new(
+                    Ipv4Addr::new( 0, 0, 0, 0 ),
+                    27773
+                );
+        
+                let make_service = make_service_fn(| _con: &AddrStream | {
+                    let app = app.clone();
+                    let name = name.clone();
+    
+                    let service = service_fn( move | req | {
+                        HttpServer::handle_connection( app.clone(), name.clone(), req )
+                    });
+        
+                    async move {
+                        Ok::<_, Infallible>( service )
+                    }
                 });
     
-                async move {
-                    Ok::<_, Infallible>( service )
-                }
-            });
-
-            loop {
                 let server = Server::bind( &addr.into() ).serve( make_service );
-
+    
                 if let Err(e) = server.await {
                     error!("Http server failed: {}", e);
-                    continue;
                 }
-            }
-        });
-
-        *current_thread.write().await = handle;
+            });
+        }
     }
 
 }

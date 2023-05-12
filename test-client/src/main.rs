@@ -21,14 +21,14 @@ pub fn serialize_request( req: Request ) -> NetworkStream {
     stream.write_string::<u8>( &req.method );
     stream.write_string::<u8>( &req.protocol );
 
-    stream.write_le( req.body.len() as u64 );
+    stream.write_le( req.body.len() as u32 );
     stream.write_bytes( req.body );
     
-    stream.write_le( req.headers.len() as u64 );
+    stream.write_le( req.headers.len() as u32 );
 
     for (key, value) in req.headers.iter() {
-        stream.write_string::<u64>( key );
-        stream.write_string::<u64>( value );
+        stream.write_string::<u32>( key );
+        stream.write_string::<u32>( value );
     }
 
     stream
@@ -56,6 +56,4 @@ async fn main() {
         .send()
         .await
         .unwrap();
-
-    println!("{}", res.text().await.unwrap());
 }
