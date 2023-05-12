@@ -4,6 +4,7 @@ use super::super::server;
 use lazy_static::lazy_static;
 use std::collections::HashMap;
 use tokio::task::JoinHandle;
+use tokio::task::spawn;
 
 #[derive(Deserialize)]
 pub struct ServerRequest {
@@ -13,10 +14,11 @@ pub struct ServerRequest {
 
 #[tauri::command]
 pub fn register_server( window: Window, server_info: ServerRequest ) {
-    let handle = match server_info.server_type.as_str() {
-        "http" => server::HttpServer::new( &window ),
+    spawn(async move {
+        match server_info.server_type.as_str() {
+            "http" => server::HttpServer::new( &window ).await,
 
-        _ => return ()
-    };
-    
+            _ => return ()
+        };
+   });
 }

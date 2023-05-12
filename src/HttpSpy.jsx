@@ -12,6 +12,8 @@ import maxIcon from './assets/max.png';
 import minIcon from './assets/min.png';
 import icon from "./assets/icon.png";
 
+let started = false;
+
 class HttpSpy extends Component {
 
     constructor(props) {
@@ -24,15 +26,38 @@ class HttpSpy extends Component {
 
         event.listen("http-data", (req) => {
             let data = req.payload;
-
             let stream = new NetworkStream( data );
 
-            let url = stream.readString16();
-            let host = stream.readString16();
-            let method = stream.readString8();
-            let protocol = stream.readString8();
+            let packet = {
+                url: stream.readString16(),
+                host: stream.readString16(),
+                method: stream.readString8(),
+                protocol: stream.readString8()
+            };
 
-            console.log(url, host, method);
+            let body_len = stream.readInt64LE();
+            let buffer = [];
+            for (let byte = 0; byte < body_len; byte++) {
+                buffer.push( stream.readByte() );
+            }
+            packet.body = buffer;
+
+            let num_headers = stream.readInt64LE();
+            let headers = {};
+            for (let header = 0; header < num_headers; num_headers++) {
+                let key = stream.readString64();
+                let value = stream.readString64();
+
+                headers[ key ] = value;
+            }
+            packet.headers = headers;
+
+            let req_data = self.state.data;
+            req_data.push( packet );
+            console.log(packet);
+            this.setState({
+                data: req_data
+            })
         });
 
         this.onRowClick = this.onRowClick.bind(this);
@@ -46,17 +71,21 @@ class HttpSpy extends Component {
 
     componentDidMount() {
         {
-            (async () => {
-                await invoke(
-                    "register_server",
-                    {
-                        serverInfo: {
-                            server_type: "http",
-                            server_port: 0
+            if (!started) {
+                started = true;
+                console.log("started");
+                (async () => {
+                    await invoke(
+                        "register_server",
+                        {
+                            serverInfo: {
+                                server_type: "http",
+                                server_port: 0
+                            }
                         }
-                    }
-                )
-            })();
+                    )
+                })();
+            }
         }
     }
 

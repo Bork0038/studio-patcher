@@ -1,23 +1,44 @@
 use tauri::{ Window, Manager, AppHandle };
-use tokio::task::spawn;
+use tokio::{
+    task::{ 
+        spawn, 
+        JoinHandle 
+    },
+    sync::{
+        Mutex, 
+        RwLock
+    }
+};
 use hyper::{ 
     Server,
     service::{ 
         make_service_fn, 
         service_fn 
     }, 
-    server::conn::AddrStream, 
+    server::conn::{
+        AddrStream, 
+        AddrIncoming
+    }, 
     Request, 
     Body, 
-    Response, Method
+    Response, 
+    Method,
 };
-use std::net::{ 
-    SocketAddrV4,
-    Ipv4Addr
+use std::{
+    net::{ 
+        SocketAddrV4,
+        Ipv4Addr
+    },
+    convert::Infallible,
+    sync::Arc
 };
-use std::convert::Infallible;
 use spdlog::prelude::*;
-use tokio::task::JoinHandle;
+use lazy_static::lazy_static;
+
+lazy_static! {
+    // this is retarded but it works
+    static ref current_thread: RwLock<JoinHandle<()>> = RwLock::new( spawn( async {} ) );
+}
 
 pub struct HttpServer;
 
@@ -45,9 +66,10 @@ impl HttpServer {
         Ok( Response::new("".into()) )
     }
     
-    pub fn new( window: &Window ) -> JoinHandle<()> {
+    pub async fn new( window: &Window ) {
         let app = window.app_handle();
         let name = window.label().to_string();
+        current_thread.read().await.abort();
 
         let handle: JoinHandle<()> = spawn( async move {
             let app = app.clone();
@@ -81,7 +103,7 @@ impl HttpServer {
             }
         });
 
-        handle
+        *current_thread.write().await = handle;
     }
 
 }

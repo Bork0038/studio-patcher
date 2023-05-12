@@ -22,6 +22,8 @@ pub fn serialize_request( req: Request ) -> NetworkStream {
     stream.write_string::<u8>( &req.protocol );
 
     stream.write_le( req.body.len() as u64 );
+    stream.write_bytes( req.body );
+    
     stream.write_le( req.headers.len() as u64 );
 
     for (key, value) in req.headers.iter() {
