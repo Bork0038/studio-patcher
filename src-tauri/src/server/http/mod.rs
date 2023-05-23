@@ -37,6 +37,7 @@ use std::{
 };
 use spdlog::prelude::*;
 use lazy_static::lazy_static;
+use super::super::stream::NetworkStream;
 
 lazy_static! {
     static ref started: AtomicBool = AtomicBool::new( false );
@@ -47,10 +48,10 @@ pub struct HttpServer;
 impl HttpServer {
 
     pub async fn handle_connection( app: AppHandle, label: String, req: Request<Body>) -> Result<Response<Body>, Infallible> {
-        if req.method() != &Method::POST {
+        if req.method() != &Method::POST || req.uri().path() != "/http" {
             return Ok( Response::new("".into()) );
         }
-
+    
         let bytes = match hyper::body::to_bytes( req.into_body() ).await {
             Ok(bytes) => bytes,
             Err(e) => return Ok( Response::new( "failed".into() ) )
@@ -60,7 +61,7 @@ impl HttpServer {
             .iter()
             .map(|d| *d)
             .collect();
-
+   
         if let Some(window) = app.get_window( &label ) {
             window.emit( "http-data", data ).unwrap();
         }

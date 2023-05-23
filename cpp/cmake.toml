@@ -1,0 +1,10 @@
+[project]
+name = "chris_studio_dll_rewrite"
+subdirs = ["../third_party"]
+
+[target.http_dll]
+type = "shared"
+sources = ["http/src/**.cpp", "http/include/**.hpp"]
+include-directories = ["include"]
+compile-features = ["cxx_std_20"]
+link-libraries = ["Polyhook2"]

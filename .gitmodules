@@ -1,0 +1,3 @@
+[submodule "cpp/third_party/Polyhook2"]
+	path = cpp/third_party/Polyhook2
+	url = https://github.com/stevemk14ebr/PolyHook_2_0

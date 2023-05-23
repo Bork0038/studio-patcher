@@ -4,6 +4,7 @@ mod commands;
 mod binary;
 mod patches;
 mod server;
+mod stream;
 
 pub use binary::{ Binary, Section };
 

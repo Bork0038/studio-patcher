@@ -32,3 +32,4 @@ pnpm-lock.yaml
 *.i64
 /target/
 test-client/target/
+cpp/build
