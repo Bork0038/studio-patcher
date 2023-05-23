@@ -26,14 +26,14 @@ endif()
 
 project(chris_studio_dll_rewrite)
 
-# Subdirectory: ../third_party
+# Subdirectory: third_party
 set(CMKR_CMAKE_FOLDER ${CMAKE_FOLDER})
 if(CMAKE_FOLDER)
-	set(CMAKE_FOLDER "${CMAKE_FOLDER}/../third_party")
+	set(CMAKE_FOLDER "${CMAKE_FOLDER}/third_party")
 else()
-	set(CMAKE_FOLDER "../third_party")
+	set(CMAKE_FOLDER third_party)
 endif()
-add_subdirectory("../third_party")
+add_subdirectory(third_party)
 set(CMAKE_FOLDER ${CMKR_CMAKE_FOLDER})
 
 # Target: http_dll

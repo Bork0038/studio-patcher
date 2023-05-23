@@ -1,6 +1,6 @@
 [project]
 name = "chris_studio_dll_rewrite"
-subdirs = ["../third_party"]
+subdirs = ["third_party"]
 
 [target.http_dll]
 type = "shared"
