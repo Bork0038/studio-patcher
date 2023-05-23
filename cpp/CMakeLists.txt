@@ -24,7 +24,7 @@ if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
 	configure_file(cmake.toml cmake.toml COPYONLY)
 endif()
 
-project(chris_studio_dll_rewrite)
+project(studio_patcher)
 
 # Subdirectory: third_party
 set(CMKR_CMAKE_FOLDER ${CMAKE_FOLDER})
@@ -56,6 +56,6 @@ target_include_directories(http_dll PUBLIC
 )
 
 target_link_libraries(http_dll PUBLIC
-	Polyhook2
+	PolyHook_2
 )
 

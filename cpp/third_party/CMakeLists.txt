@@ -6,13 +6,13 @@ if(CMKR_ROOT_PROJECT)
 	configure_file(cmake.toml cmake.toml COPYONLY)
 endif()
 
-# Subdirectory: Polyhook2
+# Subdirectory: polyhook2
 set(CMKR_CMAKE_FOLDER ${CMAKE_FOLDER})
 if(CMAKE_FOLDER)
-	set(CMAKE_FOLDER "${CMAKE_FOLDER}/Polyhook2")
+	set(CMAKE_FOLDER "${CMAKE_FOLDER}/polyhook2")
 else()
-	set(CMAKE_FOLDER Polyhook2)
+	set(CMAKE_FOLDER polyhook2)
 endif()
-add_subdirectory(Polyhook2)
+add_subdirectory(polyhook2)
 set(CMAKE_FOLDER ${CMKR_CMAKE_FOLDER})
 
