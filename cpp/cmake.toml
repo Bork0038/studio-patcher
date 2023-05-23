@@ -1,18 +1,10 @@
 [project]
 name = "studio_patcher"
-subdirs = ["http"]
-
-[vcpkg]
-version = "2023.04.15"
-packages = ["polyhook2"]
-
-[find-package.polyhook2]
-components = ["x64-windows-static"]
-config = false
+subdirs = ["http", "third_party"]
 
 [target.http_dll]
 type = "shared"
 sources = ["http/src/**.cpp", "http/include/**.hpp"]
 include-directories = ["http/include"]
 compile-features = ["cxx_std_20"]
-link-libraries = ["PolyHook_2::x64-windows"]
+link-libraries = ["PolyHook_2"]

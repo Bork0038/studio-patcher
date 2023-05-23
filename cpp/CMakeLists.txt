@@ -38,7 +38,7 @@ if(CMKR_ROOT_PROJECT AND NOT CMKR_DISABLE_VCPKG)
 endif()
 
 # Packages
-find_package(polyhook2 REQUIRED
+find_package(polyhook2 REQUIRED CONFIG
 	COMPONENTS
 		x64-windows-static
 )
@@ -77,6 +77,6 @@ target_include_directories(http_dll PUBLIC
 )
 
 target_link_libraries(http_dll PUBLIC
-	PolyHook_2::x64-windows
+	PolyHook_2::PolyHook_2
 )
 
