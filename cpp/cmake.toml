@@ -7,4 +7,4 @@ type = "shared"
 sources = ["http/src/**.cpp", "http/include/**.hpp"]
 include-directories = ["include"]
 compile-features = ["cxx_std_20"]
-link-libraries = ["Polyhook2"]
+link-libraries = ["polyhook2"]
