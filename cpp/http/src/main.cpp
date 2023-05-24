@@ -5,8 +5,8 @@
 #include <stdexcept>
 #include <ios>
 #include <iostream>
-#include "scanner.hpp"
 #include "hooks.hpp"
+#include "scanner.hpp"
 
 inline void alloc_console() {
     AllocConsole();
@@ -21,7 +21,7 @@ inline void alloc_console() {
 
 inline void entry( HMODULE hmod ) {
     try {
-        hooks::init();
+        // hooks::init();
     } catch( const std::runtime_error& error ) {
 
     }

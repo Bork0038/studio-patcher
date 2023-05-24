@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "rebuild": "cd cpp && rd /S/Q build && cmake -P cmkr.cmake && cmake -B build -DPOLYHOOK_BUILD_SHARED_LIB=ON && cmake --build build",
+    "dll_build": "cd cpp && cmake --build build"
   },
   "dependencies": {
     "@rsuite/icons": "^1.0.2",

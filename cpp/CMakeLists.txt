@@ -26,22 +26,15 @@ endif()
 
 project(studio_patcher)
 
-if(CMKR_ROOT_PROJECT AND NOT CMKR_DISABLE_VCPKG)
-	include(FetchContent)
-	message(STATUS "Fetching vcpkg (2023.04.15)...")
-	FetchContent_Declare(vcpkg URL "https://github.com/microsoft/vcpkg/archive/refs/tags/2023.04.15.tar.gz")
-	FetchContent_GetProperties(vcpkg)
-	if(NOT vcpkg_POPULATED)
-		FetchContent_Populate(vcpkg)
-		include("${vcpkg_SOURCE_DIR}/scripts/buildsystems/vcpkg.cmake")
-	endif()
+# Subdirectory: third_party
+set(CMKR_CMAKE_FOLDER ${CMAKE_FOLDER})
+if(CMAKE_FOLDER)
+	set(CMAKE_FOLDER "${CMAKE_FOLDER}/third_party")
+else()
+	set(CMAKE_FOLDER third_party)
 endif()
-
-# Packages
-find_package(polyhook2 REQUIRED CONFIG
-	COMPONENTS
-		x64-windows-static
-)
+add_subdirectory(third_party)
+set(CMAKE_FOLDER ${CMKR_CMAKE_FOLDER})
 
 # Subdirectory: http
 set(CMKR_CMAKE_FOLDER ${CMAKE_FOLDER})
@@ -52,31 +45,4 @@ else()
 endif()
 add_subdirectory(http)
 set(CMAKE_FOLDER ${CMKR_CMAKE_FOLDER})
-
-# Target: http_dll
-set(http_dll_SOURCES
-	"http/src/main.cpp"
-	"http/src/scanner.cpp"
-	"http/include/hooks.hpp"
-	"http/include/patterns.hpp"
-	"http/include/scanner.hpp"
-	cmake.toml
-)
-
-add_library(http_dll SHARED)
-
-target_sources(http_dll PRIVATE ${http_dll_SOURCES})
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${http_dll_SOURCES})
-
-target_compile_features(http_dll PUBLIC
-	cxx_std_20
-)
-
-target_include_directories(http_dll PUBLIC
-	"http/include"
-)
-
-target_link_libraries(http_dll PUBLIC
-	PolyHook_2::PolyHook_2
-)
 
