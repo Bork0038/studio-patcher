@@ -19,7 +19,7 @@ inline void alloc_console() {
     SetConsoleTitle( TEXT("studio patcher") );
 }
 
-inline void entry( HMODULE hmod ) {
+void __declspec(dllexport) entry( HMODULE hmod ) {
     try {
         hooks::init();
     } catch( const std::runtime_error& error ) {

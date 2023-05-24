@@ -16,6 +16,7 @@ use object::{
     read::pe::{
         ImageNtHeaders,
         ImageOptionalHeader,
+        ImportTable
     },
     LittleEndian,
     write::pe::{ 
@@ -43,7 +44,7 @@ impl Binary {
 
         let (nt_headers, data_directories) = ImageNtHeaders64::parse( data, &mut offset )?;
         let file_header = nt_headers.file_header();
-
+        
         let mut sections = Vec::new();  
         for section in file_header.sections(data, offset)?.iter() {
             sections.push(
@@ -75,6 +76,11 @@ impl Binary {
             self.opt_header = binary.opt_header;
             self.sections = binary.sections;
 
+        Ok(())
+    }
+
+    pub fn add_import( &mut self ) -> Result<(), Box<dyn Error>> {
+        
         Ok(())
     }
 
