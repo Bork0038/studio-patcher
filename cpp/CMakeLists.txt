@@ -26,16 +26,6 @@ endif()
 
 project(studio_patcher)
 
-# Subdirectory: third_party
-set(CMKR_CMAKE_FOLDER ${CMAKE_FOLDER})
-if(CMAKE_FOLDER)
-	set(CMAKE_FOLDER "${CMAKE_FOLDER}/third_party")
-else()
-	set(CMAKE_FOLDER third_party)
-endif()
-add_subdirectory(third_party)
-set(CMAKE_FOLDER ${CMKR_CMAKE_FOLDER})
-
 # Subdirectory: http
 set(CMKR_CMAKE_FOLDER ${CMAKE_FOLDER})
 if(CMAKE_FOLDER)

@@ -1,10 +1,8 @@
-# [target.polyhook2]
-# type="static"
-
-
 [target.http_dll]
 type = "shared"
 sources = ["src/**.cpp", "include/**.hpp"]
-include-directories = ["include"]
+include-directories = ["include", "kthook/include" ]
 compile-features = ["cxx_std_20"]
-link-libraries = ["PolyHook_2"]
+link-libraries = ["kthook"]
+
+[subdir.kthook]

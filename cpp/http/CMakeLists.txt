@@ -6,12 +6,24 @@ if(CMKR_ROOT_PROJECT)
 	configure_file(cmake.toml cmake.toml COPYONLY)
 endif()
 
+# Subdirectory: kthook
+set(CMKR_CMAKE_FOLDER ${CMAKE_FOLDER})
+if(CMAKE_FOLDER)
+	set(CMAKE_FOLDER "${CMAKE_FOLDER}/kthook")
+else()
+	set(CMAKE_FOLDER kthook)
+endif()
+add_subdirectory(kthook)
+set(CMAKE_FOLDER ${CMKR_CMAKE_FOLDER})
+
 # Target: http_dll
 set(http_dll_SOURCES
 	"src/main.cpp"
 	"include/hooks.hpp"
 	"include/patterns.hpp"
+	"include/requests.hpp"
 	"include/scanner.hpp"
+	"include/stream.hpp"
 	cmake.toml
 )
 
@@ -26,9 +38,10 @@ target_compile_features(http_dll PUBLIC
 
 target_include_directories(http_dll PUBLIC
 	include
+	"kthook/include"
 )
 
 target_link_libraries(http_dll PUBLIC
-	PolyHook_2
+	kthook
 )
 

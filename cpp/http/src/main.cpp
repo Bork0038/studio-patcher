@@ -21,9 +21,9 @@ inline void alloc_console() {
 
 inline void entry( HMODULE hmod ) {
     try {
-        // hooks::init();
+        hooks::init();
     } catch( const std::runtime_error& error ) {
-
+        std::cout << error.what() << std::endl;
     }
 }
 
