@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { invoke, event, process } from "@tauri-apps/api";
+import { invoke, event, process, window as tauriWindow } from "@tauri-apps/api";
 import { CustomProvider, Table, Button, Divider } from "rsuite";
 import parseHeaders from "parse-headers";
 import NetworkStream from "./classes/stream";
@@ -30,17 +30,19 @@ function HttpSpy(props) {
     }
 
     const close = async () => {
-		await process.exit();
+		await tauriWindow
+			.getCurrent()
+            .close();
 	}
 
 	const minimize = async () => {
-		await window
+		await tauriWindow
 			.getCurrent()
 			.minimize();
 	}
 
 	const maximize = async () => {
-		const currentWindow = window.getCurrent();
+		const currentWindow = tauriWindow.getCurrent();
 		const isMaximized   = await currentWindow.isMaximized();
 
 		document.getElementById('max-png').src = isMaximized ? maxIcon : restoreIcon;
@@ -134,9 +136,9 @@ function HttpSpy(props) {
             </div>
             <div id='title-right'>
                 <div id='button-wrapper'>
-                    <button id='min'><img id='min-png' src={minIcon} onClick={minimize} /></button>
-                    <button id='max'><img id='max-png' src={maxIcon} onClick={maximize} /></button>
-                    <button id='close'><img id='close-png' src={closeIcon} onClick={close} /></button>
+                    <button id='min' onClick={minimize}><img id='min-png' src={minIcon} /></button>
+                    <button id='max' onClick={maximize}><img id='max-png' src={maxIcon} /></button>
+                    <button id='close' onClick={close}><img id='close-png' src={closeIcon} /></button>
                 </div>
             </div>
         </div>

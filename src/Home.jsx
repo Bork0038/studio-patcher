@@ -13,7 +13,7 @@ import {
 } from "rsuite";
 
 import { Search, Global } from "@rsuite/icons";
-import { dialog, invoke, process, window, event } from "@tauri-apps/api";
+import { dialog, invoke, window as tauriWindow, event } from "@tauri-apps/api";
 import { WebviewWindow } from '@tauri-apps/api/window'
 
 import "./Home.css";
@@ -34,21 +34,26 @@ class App extends Component {
 			robloxPath: "",
 			version: "",
 			patches: [
-				// {
-				// 	name: "internal-studio",
-				// 	title: "Internal Studio",
-				// 	description: "Enables Roblox's Internal Studio mode. Gives access to features such as FFlag editor, additional plugins...",
-				// },
-				// {
-				// 	name: "extended-explorer",
-				// 	title: "Extended Explorer",
-				// 	description: "Shows hidden properties and instances in the Studio explorer",
-				// },
 				{
-					name: "themes",
-					title: "Themes",
-					description: "Adds more themes to studio"
+					name: "internal-studio",
+					title: "Internal Studio",
+					description: "Enables Roblox's Internal Studio mode. Gives access to features such as FFlag editor, additional plugins...",
 				},
+				{
+					name: "extended-explorer",
+					title: "Extended Explorer",
+					description: "Shows hidden properties and instances in the Studio explorer",
+				},
+				{
+					name: "http-spy",
+					title: "Http Spy",
+					description: "Logs Http request to Tools -> Http Spy",
+				},
+				// {
+				// 	name: "themes",
+				// 	title: "Themes",
+				// 	description: "Adds more themes to studio"
+				// },
 				// {
 				// 	name: "disable-telemetry",
 				// 	title: "Disable Telemetry",
@@ -177,17 +182,19 @@ class App extends Component {
 	}
 
 	async close() {
-		await process.exit();
+		await tauriWindow
+			.getCurrent()
+			.close();
 	}
 
 	async minimize() {
-		await window
+		await tauriWindow
 			.getCurrent()
 			.minimize();
 	}
 
 	async maximize() {
-		const currentWindow = window.getCurrent();
+		const currentWindow = tauriWindow.getCurrent();
 		const isMaximized   = await currentWindow.isMaximized();
 
 		document.getElementById('max-png').src = isMaximized ? maxIcon : restoreIcon;
@@ -279,9 +286,9 @@ class App extends Component {
 					</div>
 					<div id='title-right'>
 						<div id='button-wrapper'>
-							<button id='min'><img id ='min-png' src={minIcon} onClick={this.minimize}/></button>
-							<button id='max'><img id='max-png' src={maxIcon} onClick={this.maximize}/></button>
-							<button id='close'><img id='close-png' src={closeIcon} onClick={this.close}/></button>
+							<button id='min' onClick={this.minimize}><img id='min-png' src={minIcon} /></button>
+							<button id='max' onClick={this.maximize}><img id='max-png' src={maxIcon} /></button>
+							<button id='close' onClick={this.close}><img id='close-png' src={closeIcon} /></button>
 						</div>
 					</div>
 				</div>
