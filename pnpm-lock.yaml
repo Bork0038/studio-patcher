@@ -11,6 +11,7 @@ specifiers:
   less: ^4.1.3
   localforage: ^1.10.0
   match-sorter: ^6.3.1
+  parse-headers: ^2.0.5
   react: ^18.2.0
   react-dom: ^18.2.0
   react-router-dom: ^6.9.0
@@ -24,6 +25,7 @@ dependencies:
   buffer: 6.0.3
   localforage: 1.10.0
   match-sorter: 6.3.1
+  parse-headers: 2.0.5
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
   react-router-dom: 6.9.0_biqbaboplfbrettd7655fr4n2y
@@ -1060,6 +1062,10 @@ packages:
   /object-path/0.6.0:
     resolution: {integrity: sha512-fxrwsCFi3/p+LeLOAwo/wyRMODZxdGBtUlWRzsEpsUVrisZbEfZ21arxLGfaWfcnqb8oHPNihIb4XPE8CQPN5A==}
     engines: {node: '>=0.8.0'}
+    dev: false
+
+  /parse-headers/2.0.5:
+    resolution: {integrity: sha512-ft3iAoLOB/MlwbNXgzy43SWGP6sQki2jQvAyBg/zDFAgr9bfNWZIUj42Kw2eJIl8kEi4PbgE6U1Zau/HwI75HA==}
     dev: false
 
   /parse-node-version/1.0.1:
