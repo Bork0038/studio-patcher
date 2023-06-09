@@ -7,6 +7,7 @@ import {
 
 import App from "./Home";
 import HttpSpy from "./HttpSpy";
+import RakNetSpy from "./RakNetSpy";
 
 const router = createBrowserRouter([
 	{
@@ -16,6 +17,10 @@ const router = createBrowserRouter([
 	{
 		path: "/http",
 		element: <HttpSpy />
+	},
+	{
+		path: "/raknet",
+		element: <RakNetSpy />
 	}
 ])
 

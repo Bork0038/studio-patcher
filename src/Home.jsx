@@ -269,7 +269,7 @@ class App extends Component {
 						<button class='tab-entry' onClick={() => this.openWindow("/http")}>
 							<p class='tab-title'>HTTP Spy</p>
 						</button>
-						<button class='tab-entry' onClick={() => this.openWindow("/")}>
+						<button class='tab-entry' onClick={() => this.openWindow("/raknet")}>
 							<p class='tab-title'>RakNet Spy</p>
 						</button>
 					</div>

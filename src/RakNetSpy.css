@@ -1,0 +1,414 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
+
+body, html, #root, #wrapper {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	background-color: #16171A;
+	position: absolute;
+	font-family: 'Inter', sans-serif;
+}
+
+#title {
+	height: 32px;
+	width: 100%;
+	background-color: #202125;
+	box-shadow: 3px 5px 10px 3px rgba(0,0,0,0.1);
+	z-index: 2;
+}
+
+#tools {
+	width: 50px;
+	height: 30px;
+}
+
+#tools:hover{
+	background-color: #33353C;
+}
+
+#navigation-wrapper {
+	text-align: center;
+	width: calc(100% - 33px);
+	height: 100%;
+	display: flex;
+	padding-left: 10px;
+}
+
+.button-left {
+	text-align: center;
+	background-color: #202125;
+	border: none;
+	position: absolute;
+	color: #BBBBBB;
+	display: inline-block;
+	padding: 0;
+	z-index: 10;
+	height: 100%;
+}
+
+
+#title-text {
+	width: 100%;
+	height: 32px;
+	position: absolute;
+	text-align: center;
+	line-height: 32px;
+	vertical-align: middle;
+	font-size: 95%;
+	margin: 0;
+	user-select: none;
+	color: #BBBBBB;
+}
+
+#tabs {
+	width: 250px;
+	height: 100%;
+	position: absolute;
+}
+
+#tools-tab {
+	z-index: 5;
+	position: absolute;
+	width: 150px;
+	left: 40px;
+	top: 30px;
+	visibility: hidden;
+	background-color: #232428;
+	box-shadow: 3px 5px 10px -3px rgba(0,0,0,0.4);
+	padding-top: 2px;
+}
+
+.tab-entry {
+	width: 100%;
+	background: none;
+	border: none;
+}
+
+.tab-entry p {
+	background: none;
+	border: none;
+	padding-bottom: 6px;
+	padding-top: 6px;
+	margin: 0;
+	color: #BBBBBB;
+	line-height: 10px;
+	vertical-align: middle;
+	font-size: 13px
+}
+
+.tab-entry .tab-title {
+	float: left;
+	margin-left: 15px
+}
+.tab-entry .tab-key {
+	float: right;
+	margin-right: 40px;
+	width: 100%;
+}
+
+.tab-entry:hover {
+	background-color: #1e1f23
+}
+
+#main {
+	width: 100%;
+	height: calc(100% - 32px);
+	overflow-y: hidden;
+}
+
+#title-right, #title-left {
+	width: 50%;
+	height: 100%;
+}
+
+#title-right {
+	float: right;
+}
+
+#title-left {
+	display: flex;
+	float: left
+}
+
+#icon-wrapper {
+	width: 30px;
+	height: 100%;
+}
+
+#icon {
+	width: 20px;
+	height: 20px;
+	margin-top: 6px;
+	margin-left: 10px;
+}
+
+#button-wrapper {
+	width: 105px;
+	height: 100%;
+	display: flex;
+	float: right;
+}
+
+#close, #min, #max {
+	width: 35px;
+	height: 32px;
+	background: none;
+	border: none;
+	z-index: 4;
+}
+
+#min img, #close img, #max img {
+	display: flex;
+	margin: auto;
+}
+
+#min:hover, #max:hover {
+	background-color: #33353C
+}
+
+#close:hover {
+	background-color: #f13f32;
+}
+
+#drag {
+	width: calc(100% - 105px);
+	left: 0;
+	top: 0;
+	height: 32px;
+	position: absolute;
+	-webkit-app-region: drag;
+	z-index: 7;
+}	
+
+#content {
+	margin-left: 20px;
+	margin-top: 20px;
+	width: calc(100% - 40px);
+	height: calc(100% - 40px);
+}
+
+#version-wrapper {
+	width: 100%;
+	height: 40px;
+	display: flexbox;
+	gap: 20px
+}
+
+#select {
+	padding: 0px 20px 0px 20px;
+}
+
+
+
+#install {
+	width: 100%;
+}
+
+#restore {
+	padding: 0px 40px 0px 40px;
+}
+
+.patch {
+	width: 100%;
+}
+
+.patch-description {
+	padding-left: 40px;
+	color: rgb(180,180,180)
+}
+
+.rs-divider-horizontal {
+	margin: 10px 0 !important;
+}
+
+::-webkit-scrollbar {
+    border-radius: 5px;
+    width: 10px
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: hsla(0,0%,55%,.3);
+    border-radius: 5px
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: hsla(0,0%,55%,.9)
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 5px
+}
+
+#version-group {
+	height: 60px;
+}
+
+#patches-group {
+	height: calc(100% - 242px);
+}
+
+#install-group {
+	height: 36px;
+}
+
+#remove-goup {
+	height: 50px;
+}
+
+#patches-wrapper {
+	width: 100%;
+	height: calc(100% - 10px);
+	overflow-y: auto;
+}
+
+#patches-panel {
+	height: calc(100% - 24px);
+}
+
+#loading-screen {
+	width: 100%;
+	height: calc(100% - 32px);
+	position: absolute;
+	background-color: rgba(0,0,0,0.7);
+	z-index: 10;
+	visibility: hidden;
+}
+
+#loading-screen-inner {
+	background-color: #202125;
+
+	position: relative;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+
+	width: 200px;
+	height: 150px;
+}
+
+#loading-screen-inner p {
+	width: 100%;
+	text-align: center;
+	vertical-align: middle;
+	height: 50px;
+	line-height: 50px;
+	user-select: none;
+}
+
+#loading-screen-loader {
+	margin-top: 20px;
+}
+
+
+#main-content {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+#toolbar-wrapper {
+	width: 100%;
+	height: 100px;
+	background-color: #1a1b1e;
+	box-shadow: 3px 5px 10px -3px rgba(0,0,0,0.2);
+	display: inline-flex;
+}
+
+.toolbar-section {
+	height: 100%;
+	width: fit-content;
+	padding-left: 10px;
+}
+
+.toolbar-main {
+	height: 100%;
+	width: calc(100% - 7px);
+	padding-right: 5px;
+	float: left;
+}
+
+.toolbar-func {
+	height: calc(100% - 23px);
+	width: 100%;
+	margin: 0;
+	display: flex;
+}
+
+.toolbar-text {
+	width: 100%;
+	height: 20px;
+	line-height: 20px;
+	margin: 0;
+	text-align: center;
+	vertical-align: middle;
+	color: rgb(180, 180, 180);
+	font-size: small;
+	user-select: none
+}
+
+.toolbar-divider {
+	width: 1px;
+	height: calc(100% - 12px);
+	border-right: 1px solid rgb(50,50,50);
+	margin: 0;
+	margin-top: 6px;
+	float: right;
+}
+
+.toolbar-button {
+	width: 50px;
+	height: 100%;
+}
+
+.toolbar-button:hover {
+	background-color: #16171A;
+}
+
+.toolbar-button-icon {
+	width: 50px;
+	height: 50px;
+	position: relative;
+}
+
+.toolbar-button-icon-image {
+	width: 75%;
+	height: 75%;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	-webkit-user-drag: none;
+	-khtml-user-drag: none;
+	-moz-user-drag: none;
+	-o-user-drag: none;
+	user-select: none;
+	filter: invert(95%) sepia(0%) saturate(578%) hue-rotate(159deg) brightness(95%) contrast(83%);
+}
+
+.toolbar-button-text {
+	width: 100%;
+	height: calc(100% - 50px);
+	text-align: center;
+	color: rgb(150,150,150);
+	font-size: 75%;
+	margin: 0;
+	user-select: none;
+}
+
+#pause {
+	filter: invert(81%) sepia(14%) saturate(3861%) hue-rotate(353deg) brightness(100%) contrast(101%);
+}
+
+#resume {
+	filter: invert(58%) sepia(58%) saturate(459%) hue-rotate(73deg) brightness(91%) contrast(88%);
+}
+
+#clear {
+	filter: invert(46%) sepia(67%) saturate(5638%) hue-rotate(342deg) brightness(98%) contrast(95%)
+}
+
+#save, #open {
+	width: 65%;
+	height: 65%;
+}

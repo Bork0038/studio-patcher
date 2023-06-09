@@ -78,7 +78,6 @@ function HttpSpy(props) {
     }
 
     useEffect(() => {
-
         const listen = event.listen("http-data", (req) => {
             let payload = req.payload;
             let stream = new NetworkStream( payload );
