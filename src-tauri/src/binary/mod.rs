@@ -80,6 +80,8 @@ impl Binary {
     }
 
     pub fn add_import( &mut self ) -> Result<(), Box<dyn Error>> {
+        let data = self.serialize()?;
+
         
         Ok(())
     }

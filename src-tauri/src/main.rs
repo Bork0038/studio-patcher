@@ -13,9 +13,13 @@ async fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
             commands::install_patches,
-            commands::restore_binary,
-            commands::register_server
+            commands::restore_binary
         ])
+        .setup(|app| {
+            server::init_servers( app );
+
+            Ok(())
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

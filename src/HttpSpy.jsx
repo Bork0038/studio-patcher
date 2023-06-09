@@ -78,18 +78,6 @@ function HttpSpy(props) {
     }
 
     useEffect(() => {
-        if (!started) {
-            started = true;
-
-            (async () => {
-                await invoke("register_server", {
-                    serverInfo: {
-                        server_type: "http",
-                        server_port: 0,
-                    },
-                });
-            })();
-        }
 
         const listen = event.listen("http-data", (req) => {
             let payload = req.payload;
