@@ -68,7 +68,7 @@ function RakNetSpy(props) {
         </div>
         <div id='drag' data-tauri-drag-region></div>
         <div id="main">
-            <div id="main-content">
+            <div id="raknet-main-content">
                 <div id="toolbar-wrapper">
                     <div class="toolbar-section">
                         <div class="toolbar-main">

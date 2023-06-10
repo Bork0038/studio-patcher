@@ -1,21 +1,14 @@
 mod http;
-
+mod raknet;
 
 use tauri::App;
 use tokio::task::spawn;
-use std::{
-    net::{
-        SocketAddrV4,
-        Ipv4Addr
-    },
-    convert::Infallible,
-    sync::atomic::{
-        AtomicBool,
-        Ordering
-    },
+use std::sync::atomic::{
+    AtomicBool,
+    Ordering
 };
 use lazy_static::lazy_static;
-use rouille::{ Request, Response };
+use rouille::Response;
 
 lazy_static! {
     static ref started: AtomicBool = AtomicBool::new( false );
@@ -34,6 +27,7 @@ pub fn init_servers( app: &mut App ) {
 
                 match req.url().as_str() {
                     "/http" => http::handle_connection( app, req ),
+                    "/raknet" => raknet::handle_connection( app, req ),
                     _ => {}
                 };
 

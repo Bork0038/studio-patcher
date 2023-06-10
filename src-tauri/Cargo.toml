@@ -27,6 +27,8 @@ spdlog-rs = "0.3.8"
 base64-url = "2.0.0"
 serde_derive = "1.0.164"
 rouille = "3.6.2"
+num-derive = "0.3.3"
+dns-lookup = "2.0.2"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

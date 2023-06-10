@@ -48,6 +48,11 @@ macro_rules! impl_Read_Write (( $($int:ident),* ) => {
 
 impl_Read_Write!( usize, u8, u16, u32, u64, u128, i8, i16, i32, i64, i128 );
 
+pub trait Serializable<T> {
+    fn write( &mut self, stream: &mut NetworkStream );
+    fn read( stream: &mut NetworkStream ) -> T;
+}
+
 impl NetworkStream {
     
     pub fn clone( &mut self ) -> NetworkStream {
@@ -196,6 +201,20 @@ impl NetworkStream {
             2 => self.read_string::<u32>(),
             _ => self.read_string::<u64>()
         }
+    }
+
+    pub fn write<T>( &mut self, mut obj: T ) 
+    where T: Serializable<T> {
+        obj.write( self );
+    }
+
+    pub fn read<T>( &mut self ) -> T 
+    where T: Serializable<T> {
+        T::read( self )
+    }
+    
+    pub fn read_to_end( &mut self ) -> &[u8] {
+        &self.data[ self.read_pointer as usize .. self.data.len() ]
     }
 
 }
