@@ -170,6 +170,22 @@ impl NetworkStream {
         ).unwrap()
     }
 
+    pub fn write_string_be<T>( &mut self, s: &str )
+    where T: ReadWrite + NumCast {
+        self.write_be::<T>( T::from( s.len() ).unwrap() );
+
+        self.write_bytes( s.as_bytes().to_vec() );
+    }
+
+    pub fn read_string_be<T>( &mut self ) -> String
+    where T: ReadWrite + NumCast {
+        let len = self.read_be::<T>();
+
+        String::from_utf8(
+            self.read_bytes( <u32 as NumCast>::from( len ).unwrap() )
+        ).unwrap()
+    }
+
     pub fn write_string_dyn( &mut self, s: &str ) {
         let len = s.len();
         match len {

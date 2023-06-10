@@ -1,5 +1,8 @@
 mod lib;
+mod packet;
+
 pub use lib::*;
+pub use packet::Packet;
 
 use tauri::{ Manager, AppHandle };
 use rouille::Request;
@@ -29,6 +32,8 @@ pub fn handle_connection( app: AppHandle, req: &Request ) {
     let packet_type = PacketType::from_u8( stream.read_byte() ).unwrap();
     let address: SystemAddress = stream.read();
  
-    let packet = stream.read_to_end();
-    println!("{:02X}", packet[0]);
+    let packet_data = stream.read_to_end().to_vec();
+    if let Some(packet) = Packet::deserialize( &packet_data ) {
+        println!("{}", packet);
+    }
 }
