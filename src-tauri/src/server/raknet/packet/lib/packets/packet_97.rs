@@ -6,6 +6,6 @@ pub fn deserialize( mut stream: NetworkStream ) -> Option<Packet> {
     let compressed_len: u32 = stream.read_le();
     let decompressed_len: u32 = stream.read_le();
 
-    println!("{} {} {}", compressed_len, decompressed_len, stream.get_data().len());
+    // println!("{} {} {}", compressed_len, decompressed_len, stream.get_data().len());
     None
 }

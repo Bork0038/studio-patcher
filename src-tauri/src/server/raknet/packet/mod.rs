@@ -2,8 +2,9 @@ mod lib;
 
 use std::fmt;
 use super::NetworkStream;
+use serde::{ Deserialize, Serialize };
 
-#[derive(Debug)]
+#[derive(Debug, Deserialize, Serialize)]
 pub enum Packet {
     ID_FCAR_REQUIRES_PUBLIC_KEY { id: u16 },
     ID_FCAR_REQUIRES_SECURITY { id: u16 },
@@ -27,7 +28,13 @@ pub enum Packet {
     },
 
     ID_SET_GLOBALS { // not done -- pushIncomingPackets 
-        id: u16
+        id: u16,
+        streaming_enabled: bool,
+        filtering_enabled: bool,
+        third_party_asset_allowed: bool,
+        third_party_purchase_allowed: bool,
+        third_party_teleport_allowed: bool,
+        peer_id: u32,
     },
     
     ID_MARKER {

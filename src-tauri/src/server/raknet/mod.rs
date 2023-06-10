@@ -13,10 +13,10 @@ use num_traits::FromPrimitive;
 pub fn handle_connection( app: AppHandle, req: &Request ) {
     if req.method() != "POST" { return };
 
-    let window = match app.get_window( "/raknet" ) {
-        Some(window) => window,
-        None => return
-    };
+    // let window = match app.get_window( "/raknet" ) {
+    //     Some(window) => window,
+    //     None => return
+    // };
 
     let mut data = match req.data() {
         Some(data) => data,
@@ -34,6 +34,8 @@ pub fn handle_connection( app: AppHandle, req: &Request ) {
  
     let packet_data = stream.read_to_end().to_vec();
     if let Some(packet) = Packet::deserialize( &packet_data ) {
-        println!("{}", packet);
+        println!("{} {}", opcode, serde_json::to_string(&packet).unwrap());
+    } else {    
+        println!("{} UNKNOWN_PACKET #{:02X}", opcode, packet_data[0])
     }
 }

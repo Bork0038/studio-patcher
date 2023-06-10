@@ -9,7 +9,7 @@ mod http_spy;
 use internal_studio::InternalStudioPatch;
 use extended_explorer::ExtendedExplorerPatch;
 use themes::ThemesPatch;
-use http_spy::HttpSpyPatch;
+// use http_spy::HttpSpyPatch;
 
 use crate::Binary;
 use std::{ rc::Rc, cell::RefCell };
