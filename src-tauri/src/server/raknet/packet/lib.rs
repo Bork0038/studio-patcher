@@ -1,7 +1,6 @@
-mod packets;
+pub mod packets;
 
 use super::{ Packet, NetworkStream };
-use std::convert::From;
 
 impl Packet {
 
@@ -18,6 +17,11 @@ impl Packet {
             0x84 => packets::packet_84::deserialize( stream ),
             0x93 => packets::packet_93::deserialize( stream ),
             0x97 => packets::packet_97::deserialize( stream ),
+
+            0x83_04 => packets::packet_83_04::deserialize( stream ),
+            0x83_05 => packets::packet_83_05::deserialize( stream ),
+            0x83_06 => packets::packet_83_06::deserialize( stream ),
+            0x83_10 => packets::packet_83_10::deserialize( stream ),
             _ => None
         }
     }

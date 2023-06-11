@@ -46,7 +46,7 @@ macro_rules! impl_Read_Write (( $($int:ident),* ) => {
     )*
 });
 
-impl_Read_Write!( usize, u8, u16, u32, u64, u128, i8, i16, i32, i64, i128 );
+impl_Read_Write!( usize, u8, u16, u32, u64, u128, i8, i16, i32, i64, i128, f32, f64 );
 
 pub trait Serializable<T> {
     fn write( &mut self, stream: &mut NetworkStream );

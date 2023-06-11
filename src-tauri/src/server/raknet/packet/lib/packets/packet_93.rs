@@ -16,6 +16,6 @@ pub fn deserialize( mut stream: NetworkStream ) -> Option<Packet> {
     }
 
     Some(
-        Packet::ID_DICTIONARY_FORMAT { id: 0x93, fflags }
+        Packet::ID_SFFLAG_SYNC { id: 0x93, fflags }
     )
 }

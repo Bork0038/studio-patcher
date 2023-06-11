@@ -412,3 +412,56 @@ body, html, #root, #wrapper {
 	width: 65%;
 	height: 65%;
 }
+
+#raknet-body {
+	width: calc( 100% - 40px );
+	height: calc( 100% - 140px );
+
+	margin: 10px 20px;
+}
+
+#raknet-client-list {
+	width: 100%;
+	height: 35px;
+	background-color: #1A1B1E;
+	overflow-x: auto;
+	overflow-y: hidden;
+}
+
+#raknet-main-body {
+	width: 100%;
+	height: calc( 100% - 55px );
+
+	margin-top: 20px;
+}
+
+.raknet-client {
+	height: 100%;
+	width: fit-content;
+
+	padding: 0 5px;
+	display: inline-flex;
+}
+
+.raknet-client .rs-checkbox {
+	height: 100%;
+}
+
+.raknet-client-icon {
+	width: 35px;
+	height: 100%;
+}
+
+.raknet-client-icon .rs-icon {
+	position: relative;
+	top: 40%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.raknet-client-address {
+	height: 100%;
+	line-height: 35px;
+	vertical-align: middle;
+	font-size: small;
+}

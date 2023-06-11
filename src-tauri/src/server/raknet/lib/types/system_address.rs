@@ -1,9 +1,11 @@
 use dns_lookup::AddrFamily;
+use serde_derive::{Deserialize, Serialize};
 use super::super::{ structs::{ InAddr, SockAddrIn }, Macros::{ ntohs, htons } };
 use std::{net::{SocketAddrV4, Ipv4Addr}, str::FromStr};
 use crate::stream::{ NetworkStream, Serializable };
 use super::SystemIndex;
 
+#[derive(Deserialize, Serialize, Clone)]
 pub struct SystemAddress {
     pub address: SockAddrIn,
     pub debug_port: u16,

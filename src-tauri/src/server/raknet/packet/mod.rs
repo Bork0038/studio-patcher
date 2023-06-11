@@ -4,7 +4,7 @@ use std::fmt;
 use super::NetworkStream;
 use serde::{ Deserialize, Serialize };
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub enum Packet {
     ID_FCAR_REQUIRES_PUBLIC_KEY { id: u16 },
     ID_FCAR_REQUIRES_SECURITY { id: u16 },
@@ -56,13 +56,59 @@ pub enum Packet {
         guid_index_2: i32
     },
 
-    ID_DICTIONARY_FORMAT {
+    ID_SFFLAG_SYNC {
         id: u16,
         fflags: Vec<(String, String)>
     },
 
     ID_NEW_SCHEMA {
         id: u16
+    },
+
+    ID_REPLIC_PING {
+        id: u16,
+        type_and_version: u8,
+        time: u64,
+        first_serialize_out_of_time: u32,
+        peer_ping_arrival_local_read_time: Option<u32>,
+        peer_reply_queue_time: Option<u32>,
+        peer_reply_serialize_time: Option<u32>,
+        peer_last_known_bcs_queue_time: Option<u32>,
+        peer_last_known_recv_to_pop_time: Option<u32>,
+        peer_last_known_pop_to_read_time: Option<u32>,
+        render_fps: Option<f32>,
+        physics_fps: Option<f32>,
+        heartbeat_fps: Option<f32>,
+        send_stats: u32,
+        extra_stats: u32
+    },
+
+    ID_REPLIC_PING_BACK {
+        id: u16,
+        type_and_version: u8,
+        time: u64,
+        first_serialize_out_of_time: u32,
+        peer_ping_arrival_local_read_time: Option<u32>,
+        peer_reply_queue_time: Option<u32>,
+        peer_reply_serialize_time: Option<u32>,
+        peer_last_known_bcs_queue_time: Option<u32>,
+        peer_last_known_recv_to_pop_time: Option<u32>,
+        peer_last_known_pop_to_read_time: Option<u32>,
+        render_fps: Option<f32>,
+        physics_fps: Option<f32>,
+        heartbeat_fps: Option<f32>,
+        send_stats: u32,
+        extra_stats: u32
+    },
+
+    ID_REPLIC_TAG {
+        id: u16,
+        tag_id: lib::packets::packet_83_10::TagItemType
+    },
+
+    ID_REPLIC_MARKER {
+        id: u16,
+        marker_id: i32
     }
 }
 
