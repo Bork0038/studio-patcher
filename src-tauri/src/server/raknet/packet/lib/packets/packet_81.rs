@@ -13,7 +13,8 @@ pub fn deserialize( mut stream: NetworkStream ) -> Option<Packet> {
 
     Some(
         Packet::ID_SET_GLOBALS { 
-            id: 0x81, 
+            id: 0x81,
+            len: stream.get_data().len(), 
             streaming_enabled, 
             filtering_enabled, 
             third_party_asset_allowed, 

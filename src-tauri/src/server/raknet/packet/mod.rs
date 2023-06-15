@@ -23,12 +23,14 @@ pub enum Packet {
 
     ID_TIMESTAMP {
         id: u16,
+        len: usize,
         last_time: u64,
         flag: u8
     },
 
     ID_SET_GLOBALS { // not done -- pushIncomingPackets 
         id: u16,
+        len: usize,
         streaming_enabled: bool,
         filtering_enabled: bool,
         third_party_asset_allowed: bool,
@@ -39,34 +41,41 @@ pub enum Packet {
     
     ID_MARKER {
         id: u16,
+        len: usize,
         marker_id: i32
     },
 
     ID_PHYSICS { // no clue where this comes from
-        id: u16
+        id: u16,
+        len: usize,
     },
     
     ID_TOUCHES {  // not done -- pushIncomingPackets 
         id: u16,
+        len: usize,
     },
 
     ID_CHAT_ALL {
         id: u16,
+        len: usize,
         guid_index_1: i32,
         guid_index_2: i32
     },
 
     ID_SFFLAG_SYNC {
         id: u16,
+        len: usize,
         fflags: Vec<(String, String)>
     },
 
     ID_NEW_SCHEMA {
-        id: u16
+        id: u16,
+        len: usize,
     },
 
     ID_REPLIC_PING {
         id: u16,
+        len: usize,
         type_and_version: u8,
         time: u64,
         first_serialize_out_of_time: u32,
@@ -85,6 +94,7 @@ pub enum Packet {
 
     ID_REPLIC_PING_BACK {
         id: u16,
+        len: usize,
         type_and_version: u8,
         time: u64,
         first_serialize_out_of_time: u32,
@@ -103,11 +113,13 @@ pub enum Packet {
 
     ID_REPLIC_TAG {
         id: u16,
+        len: usize,
         tag_id: lib::packets::packet_83_10::TagItemType
     },
 
     ID_REPLIC_MARKER {
         id: u16,
+        len: usize,
         marker_id: i32
     }
 }

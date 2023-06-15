@@ -18,6 +18,7 @@ pub fn deserialize( mut stream: NetworkStream ) -> Option<Packet> {
     Some(
         Packet::ID_REPLIC_TAG {
             id: 0x83_10,
+			len: stream.get_data().len(),
             tag_id: TagItemType::from_u8( tag_id as u8 ).unwrap()
         }
     )

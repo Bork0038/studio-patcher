@@ -16,6 +16,10 @@ pub fn deserialize( mut stream: NetworkStream ) -> Option<Packet> {
     }
 
     Some(
-        Packet::ID_SFFLAG_SYNC { id: 0x93, fflags }
+        Packet::ID_SFFLAG_SYNC { 
+            id: 0x93,
+			len: stream.get_data().len(), 
+            fflags 
+        }
     )
 }

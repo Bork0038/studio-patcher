@@ -20,13 +20,17 @@ import clearIcon from "./assets/clear.svg"
 import saveIcon from "./assets/save.svg";
 import openIcon from "./assets/open.svg";
 
-import { Pc, Global } from "@rsuite/icons"
+import { Pc, Global, SortUp, SortDown } from "@rsuite/icons"
 
 function RakNetSpy(props) {
     const [ paused, setPaused ] = useState(false);
 
     const [ clientHashTable, setClientHashTable ] = useState([]);
     const [ clients, setClients ] = useState([]);
+    const [ enabledClients, setEnabledClients ] = useState({});
+
+    const [ packets, setPackets ] = useState([]);
+    const [ activePacket, setActivePacket ] = useState([]);
 
     const close = async () => {
 		await tauriWindow
@@ -50,43 +54,158 @@ function RakNetSpy(props) {
 		this.setState();
 	}
 
-    const addClient = ( address, packetType ) => {
+    const getIpFromAddress = address => {
         let buf = Buffer.alloc(4);
         buf.writeUint32LE( address.address.sin_addr );
 
-        let ip = `${buf[0]}.${buf[1]}.${buf[2]}.${buf[3]}:${address.address.sin_port}`;
+        return `${buf[0]}.${buf[1]}.${buf[2]}.${buf[3]}:${address.address.sin_port}`;
+    }
 
-        const clientList = clients;
+    const addClient = ( address, packetType, clientHash ) => {
+        const clientList = [ ...clients ];
         clientList.push({
-            ip,
-            packetType
+            ip: getIpFromAddress( address ),
+            packetType,
+            hash: clientHash
         });
 
-        console.log(clientList);
         setClients( clientList );
     }
 
+    const toggleClient = clientHash => {
+        setEnabledClients({
+            [clientHash]: !enabledClients[ clientHash ]
+        })
+    }
+
+    const bytesFromInt = int => {
+        return [
+            (int >> 8) & 0xFF,
+            int & 0xFF
+        ]
+    }
     
+    const getPackets = () => {
+        const clientHashes = Object
+            .keys( enabledClients)
+            .filter( key => enabledClients[ key ] );
+
+        return packets.filter( packet => !clientHashes.includes( packet.clientHash ) );
+    }
+
+    const onRowClick = row => {
+        let { packet } = row;
+
+        let validKeys = Object
+            .keys( packet )
+            .filter( 
+                key => 
+                    key != "id" && 
+                    key != "len" &&
+                    packet[ key ] != null
+            )
+
+        const newActivePacket = [
+            <div class="raknet-inspector-pair">
+                <p class="raknet-inspector-pair-key">ID</p>
+                <p class="raknet-inspector-pair-value">{ row.id }</p>
+            </div>,
+             <div class="raknet-inspector-pair">
+                <p class="raknet-inspector-pair-key">Name</p>
+                <p class="raknet-inspector-pair-value">{ row.name }</p>
+            </div>,
+            <div class="raknet-inspector-pair">
+                <p class="raknet-inspector-pair-key">Source</p>
+                <p class="raknet-inspector-pair-value">{ row.client }</p>
+            </div>,
+            <div class="raknet-inspector-pair">
+                <p class="raknet-inspector-pair-key">Type</p>
+                <p class="raknet-inspector-pair-value">{ row.packetType }</p>
+            </div>,
+
+            <p class="raknet-inspector-title">Packet Data</p>
+        ];
+        for (let key of validKeys) {
+            let value = packet[key];
+            
+            if (typeof value == "object") {
+                newActivePacket.push(
+                    <p class="raknet-inspector-title">{ key }</p>
+                );
+
+                for ( let key of Object.keys( value ) ) {
+                    let value2 = value[ key ];
+
+                    if (typeof value2 == "object" && value2.length == 2) {
+                        newActivePacket.push(
+                            <div class="raknet-inspector-pair">
+                                <p class="raknet-inspector-pair-key">{ value2[ 0 ] }</p>
+                                <p class="raknet-inspector-pair-value">{ value2[ 1 ] }</p>
+                            </div>
+                        );
+                    } else {
+                        newActivePacket.push(
+                            <div class="raknet-inspector-pair">
+                                <p class="raknet-inspector-pair-key">{ key }</p>
+                                <p class="raknet-inspector-pair-value">{ value2 }</p>
+                            </div>
+                        );
+                    }
+                }
+            } else {
+                newActivePacket.push(
+                    <div class="raknet-inspector-pair">
+                        <p class="raknet-inspector-pair-key">{ key }</p>
+                        <p class="raknet-inspector-pair-value">{ value }</p>
+                    </div>
+                );
+            }
+        }
+
+        setActivePacket( newActivePacket );
+    }
+
     useEffect(() => {
         const listen = event.listen("packet-data", (req) => {
             if (paused) return;
+
             const { address, opcode, packet, packet_type } = req.payload;
-      
+
             const packetName =  Object.keys( packet )[ 0 ];
             const packetData = packet[ packetName ]; 
 
+
             const clientHash = JSON.stringify( address ) + packet_type; // hash later
             if ( !clientHashTable.includes( clientHash )) {
-                addClient( address, packet_type );
+                addClient( address, packet_type, clientHash );
 
                 const hashTable = clientHashTable;
                 hashTable.push( clientHash );
                 setClientHashTable( hashTable );
             }
+
+            let id_bytes = bytesFromInt( packetData.id );
+            let id_string = id_bytes[ 0 ] == 0x83 
+                ? `${id_bytes[ 0 ].toString( 16 )} ${id_bytes[ 1 ].toString( 16 )}`
+                : id_bytes[ 1 ].toString( 16 );
+
+            const packetList = [ ...packets ];
+            packetList.push({
+                id: id_string,
+                name: packetName,
+                client: getIpFromAddress( address ),
+                len: packetData.len,
+                opcode,
+                packet: packetData,
+                packetType: packet_type,
+                clientHash
+            })
+            
+            setPackets( packetList );
         });
 
         return () => {
-            listen.then((f) => f());
+            listen.then(f => f());
         };
     });
 
@@ -165,8 +284,8 @@ function RakNetSpy(props) {
                     <div id="raknet-client-list">
                         {
                             clients.map( value => {
-                                return <div class="raknet-client" onClick={() => console.log("a")}>
-                                    <Checkbox />
+                                return <div class="raknet-client" onClick={ () => toggleClient( value.hash ) }>
+                                    <Checkbox checked={ !enabledClients[ value.hash ] } />
                                     <div class="raknet-client-icon">
                                         {
                                             value.packetType == "StudioClient"
@@ -180,7 +299,48 @@ function RakNetSpy(props) {
                         }
                     </div>
                     <div id="raknet-main-body">
-
+                        <div id="raknet-packet-list">
+                            <Table data={getPackets} onRowClick={onRowClick} shouldUpdateScroll={()=>true} fillHeight virtualized>
+                                <Table.Column width={65} fullText>
+                                    <Table.HeaderCell></Table.HeaderCell>
+                                    <Table.Cell>
+                                        {
+                                            rowData => <div class="raknet-arrow-cell">
+                                                <div class="raknet-arrow-inner">
+                                                    { 
+                                                        rowData.opcode == "OutgoingPackets" 
+                                                            ? <SortUp class="sort-up" />
+                                                            : <SortDown class="sort-down" />
+                                                    }
+                                                </div>
+                                            </div>
+                                        }
+                                    </Table.Cell>
+                                </Table.Column>
+                                <Table.Column width={65}>
+                                    <Table.HeaderCell>ID</Table.HeaderCell>
+                                    <Table.Cell dataKey="id" />
+                                </Table.Column>
+                                <Table.Column flexGrow={2} fullText>
+                                    <Table.HeaderCell>Name</Table.HeaderCell>
+                                    <Table.Cell dataKey="name" />
+                                </Table.Column>
+                                <Table.Column flexGrow={1} fullText>
+                                    <Table.HeaderCell>Source</Table.HeaderCell>
+                                    <Table.Cell dataKey="client" />
+                                </Table.Column>
+                                <Table.Column flexGrow={0.5} fullText>
+                                    <Table.HeaderCell># of Bytes</Table.HeaderCell>
+                                    <Table.Cell dataKey="len" />
+                                </Table.Column>
+                            </Table>
+                        </div>
+                        <div id="raknet-packet-inspector">
+                            <p class="raknet-inspector-title">Packet Info</p>
+                            {
+                                activePacket
+                            }
+                        </div>
                     </div>
                 </div>
             </div>

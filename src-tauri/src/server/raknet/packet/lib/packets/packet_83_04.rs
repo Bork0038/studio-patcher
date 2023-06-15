@@ -6,6 +6,7 @@ pub fn deserialize( mut stream: NetworkStream ) -> Option<Packet> {
     Some(
         Packet::ID_REPLIC_MARKER {
             id: 0x83_04,
+            len: stream.get_data().len(),
             marker_id: stream.read_be()
         }
     )

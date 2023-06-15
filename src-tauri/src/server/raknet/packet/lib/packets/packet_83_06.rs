@@ -36,6 +36,7 @@ pub fn deserialize( mut stream: NetworkStream ) -> Option<Packet> {
     Some(
         Packet::ID_REPLIC_PING_BACK { 
             id: 0x83_06,
+            len: stream.get_data().len(),
             type_and_version,
             time,
             first_serialize_out_of_time,
