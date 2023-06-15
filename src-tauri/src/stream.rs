@@ -219,6 +219,42 @@ impl NetworkStream {
         }
     }
 
+    pub fn read_varint64( &mut self ) -> u64 {
+        let mut int: u64 = 0;
+        let mut idx: u64 = 0;
+
+        loop {
+            let byte = self.read_byte();
+
+            int |= (( byte & 0x7F ) as u64) << idx;
+            idx += 7;
+
+            if byte & 0x80 == 0 {
+                break;
+            }
+        }
+
+        int
+    }
+
+    pub fn read_varint32( &mut self ) -> u32 {
+        let mut int: u32 = 0;
+        let mut idx: u32 = 0;
+
+        loop {
+            let byte = self.read_byte();
+
+            int |= (( byte & 0x7F ) as u32) << idx;
+            idx += 7;
+            
+            if byte & 0x80 == 0 {
+                break;
+            }
+        }
+
+        int
+    }
+
     pub fn write<T>( &mut self, mut obj: T ) 
     where T: Serializable<T> {
         obj.write( self );

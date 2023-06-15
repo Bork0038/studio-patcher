@@ -542,7 +542,7 @@ body, html, #root, #wrapper {
 	margin: 0;
 }
 
-.raknet-inspector-pair-key {
+.raknet-inspector-pair-key {	
 	width: 60%;
 	border-right: 1px solid #292d33;
 }

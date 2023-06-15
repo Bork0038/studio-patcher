@@ -43,7 +43,6 @@ pub fn handle_connection( app: AppHandle, req: &Request ) {
  
     let packet_data = stream.read_to_end().to_vec();
     if let Some(packet) = Packet::deserialize( &packet_data ) {
-        println!("{}", packet);
         let packet_transfer = PacketTransfer { opcode, packet_type, address, packet };
 
         window.emit( "packet-data", packet_transfer ).unwrap();
@@ -54,6 +53,13 @@ pub fn handle_connection( app: AppHandle, req: &Request ) {
             packet_data[ 0 ] as u16
         }; 
 
-        // println!("{} UNKNOWN_PACKET #{:X}", opcode, packet_id)
+        let packet_transfer = PacketTransfer { 
+            opcode, 
+            packet_type, 
+            address, 
+            packet: Packet::ID_UNKNOWN { id: packet_id, len: packet_data.len() }
+        };
+
+        window.emit( "packet-data", packet_transfer ).unwrap();
     }
 }

@@ -121,6 +121,11 @@ pub enum Packet {
         id: u16,
         len: usize,
         marker_id: i32
+    },
+
+    ID_UNKNOWN {
+        id: u16,
+        len: usize
     }
 }
 
