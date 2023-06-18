@@ -84,7 +84,9 @@ pub fn deserialize( mut stream: NetworkStream ) -> Option<Packet> {
                     network_id: class_network_id,
                     properties
                 }
-            )
+            );
+            
+            break;
         }
     }
 

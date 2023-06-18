@@ -1,3 +1,3 @@
 [project]
 name = "studio_patcher"
-subdirs = ["http", "loader"]
+subdirs = ["http", "loader", "raknet"]

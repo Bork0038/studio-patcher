@@ -10,8 +10,6 @@
 #include <chrono>
 #include <thread>
 namespace hooks {
-    
-
 
     typedef std::pair<std::string, std::string> header;
 
@@ -103,19 +101,3 @@ namespace hooks {
         hook.install();
     }
 }
-// namespace hooks {
-
-//     // typedef void(__fastcall* http_res_t)(__int64 self, __int64* res);
-//     // http_res_t old_http_res = nullptr;
-//     // uint64_t addr_http_res = 0;
-//     // void __fastcall hook_http_res(__int64 self, __int64* res) {
-//     //  /*   std::thread task(log_req, *res);
-//     //     task.join();*/
-//     //     std::cout << "a" << std::endl;
-
-//     //     // return (*PLH::FnCast(addr_http_res, &old_http_res))(self, res);
-//     // }
-
-
-   
-// }

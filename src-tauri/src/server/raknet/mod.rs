@@ -34,14 +34,15 @@ pub fn handle_connection( app: AppHandle, req: &Request ) {
     
     let mut buf = Vec::new();
     data.read_to_end( &mut buf ).unwrap();
-
     let mut stream = NetworkStream::from( buf );
 
     let opcode = Opcode::from_u8( stream.read_byte() ).unwrap();
     let packet_type = PacketType::from_u8( stream.read_byte() ).unwrap();
     let address: SystemAddress = stream.read();
- 
-    let packet_data = stream.read_to_end().to_vec();
+    
+    let packet_len: u32 = stream.read_le();
+    let packet_data = stream.read_bytes( packet_len );
+
     if let Some(packet) = Packet::deserialize( &packet_data ) {
         let packet_transfer = PacketTransfer { opcode, packet_type, address, packet };
 

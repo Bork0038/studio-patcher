@@ -1,3 +1,7 @@
 [submodule "cpp/http/kthook"]
 	path = cpp/http/kthook
 	url = https://github.com/kin4stat/kthook
+
+[submodule "cpp/raknet/kthook"]
+	path = cpp/raknet/kthook
+	url = https://github.com/kin4stat/kthook

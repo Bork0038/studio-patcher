@@ -46,3 +46,13 @@ endif()
 add_subdirectory(loader)
 set(CMAKE_FOLDER ${CMKR_CMAKE_FOLDER})
 
+# Subdirectory: raknet
+set(CMKR_CMAKE_FOLDER ${CMAKE_FOLDER})
+if(CMAKE_FOLDER)
+	set(CMAKE_FOLDER "${CMAKE_FOLDER}/raknet")
+else()
+	set(CMAKE_FOLDER raknet)
+endif()
+add_subdirectory(raknet)
+set(CMAKE_FOLDER ${CMKR_CMAKE_FOLDER})
+

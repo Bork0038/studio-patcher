@@ -94,6 +94,8 @@ function RakNetSpy(props) {
     }
 
     const onRowClick = row => {
+        if (paused) return;
+
         let { packet } = row;
 
         let validKeys = Object
@@ -165,6 +167,22 @@ function RakNetSpy(props) {
         setActivePacket( newActivePacket );
     }
 
+    const clearPackets = () => {
+        setClients([]);
+        setPackets([]);
+        setActivePacket([]);
+        setClientHashTable([]);
+        setEnabledClients({});
+    }
+
+    const pause = () => {
+        setPaused(true);
+    }
+
+    const unpause = () => {
+        setPaused(false);
+    }
+
     useEffect(() => {
         const listen = event.listen("packet-data", (req) => {
             if (paused) return;
@@ -232,13 +250,13 @@ function RakNetSpy(props) {
                     <div class="toolbar-section">
                         <div class="toolbar-main">
                             <div class="toolbar-func">
-                                <div class="toolbar-button">
+                                <div class="toolbar-button" onClick={pause}>
                                     <div class="toolbar-button-icon">
                                         <img class="toolbar-button-icon-image" id="pause" src={pauseIcon}></img> {/* thank you convoluted name #1 */}
                                     </div>
                                     <p class="toolbar-button-text">Pause</p>
                                 </div>
-                                <div class="toolbar-button">
+                                <div class="toolbar-button" onClick={unpause}>
                                     <div class="toolbar-button-icon">
                                         <img class="toolbar-button-icon-image" id="resume" src={resumeIcon}></img> {/* thank you convoluted name #1 */}
                                     </div>
@@ -254,7 +272,7 @@ function RakNetSpy(props) {
                     <div class="toolbar-section">
                         <div class="toolbar-main">
                             <div class="toolbar-func">
-                                <div class="toolbar-button">
+                                <div class="toolbar-button" onClick={clearPackets}>
                                     <div class="toolbar-button-icon">
                                         <img class="toolbar-button-icon-image" id="clear" src={clearIcon}></img> {/* thank you convoluted name #1 */}
                                     </div>
