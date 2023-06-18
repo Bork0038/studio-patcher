@@ -149,7 +149,7 @@ function RakNetSpy(props) {
                         newActivePacket.push(
                             <div class="raknet-inspector-pair">
                                 <p class="raknet-inspector-pair-key">{ key }</p>
-                                <p class="raknet-inspector-pair-value">{ value2 }</p>
+                                <p class="raknet-inspector-pair-value">{ value2.toString() }</p>
                             </div>
                         );
                     }
@@ -158,7 +158,7 @@ function RakNetSpy(props) {
                 newActivePacket.push(
                     <div class="raknet-inspector-pair">
                         <p class="raknet-inspector-pair-key">{ key }</p>
-                        <p class="raknet-inspector-pair-value">{ value }</p>
+                        <p class="raknet-inspector-pair-value">{ value.toString() }</p>
                     </div>
                 );
             }

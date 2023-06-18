@@ -2,27 +2,14 @@ use super::super::{ Packet, NetworkStream };
 use serde_derive::{Deserialize, Serialize};
 use zstd::stream::Decoder;
 use std::io;
+use super::lib::*;
 
-#[derive(Deserialize, Serialize)]
-pub struct NetworkEnum {
-    name: String,
-    size: u8,
-    network_id: u16
+fn read_varint_string( stream: &mut NetworkStream ) -> String {
+    let len = stream.read_varint32();
+    let bytes = stream.read_bytes( len );
+
+    String::from_utf8( bytes ).unwrap()
 }
-
-#[derive(Deserialize, Serialize)]
-pub struct NetworkProperty {
-    name: String,
-    network_id: u16
-}
-
-#[derive(Deserialize, Serialize)]
-pub struct NetworkClass {
-    name: String,
-    network_id: u16,
-    properties: Vec<NetworkProperty>
-}
-
 pub fn deserialize( mut stream: NetworkStream ) -> Option<Packet> {
     stream.ignore_bytes( 1 );
 
@@ -45,44 +32,47 @@ pub fn deserialize( mut stream: NetworkStream ) -> Option<Packet> {
     let enums_len = decompressed_stream.read_varint32();
     let mut enums = Vec::new();
     for network_id in 0..enums_len {
-        let len = decompressed_stream.read_varint32();
-
-        let name = {
-            let bytes = decompressed_stream.read_bytes( len );
-
-            String::from_utf8( bytes ).unwrap()
-        };
-
+        let name = read_varint_string( &mut decompressed_stream );
         let size = decompressed_stream.read_byte();
 
         enums.push( NetworkEnum { name, network_id: network_id as u16, size });
     }
 
     let class_len = decompressed_stream.read_varint32();
-    let property_len = decompressed_stream.read_varint32();
+    let prop_len = decompressed_stream.read_varint32();
     let event_len = decompressed_stream.read_varint32();
 
     let mut classes = Vec::new();
-    // let mut props = Vec::new();
-    // let mut events = Vec::new();
+
+    let mut class_index = 0;
+    let mut prop_index = 0;
+    let mut event_index = 0;
+
     {
         for i in 0..class_len {
-            let class_name_len = decompressed_stream.read_varint32();
+            let class_name = read_varint_string( &mut decompressed_stream );
 
-            let class_name = {
-                let bytes = decompressed_stream.read_bytes( class_name_len );
-    
-                String::from_utf8( bytes ).unwrap()
-            };
+            let mut class_props = Vec::new();
+            let prop_len = decompressed_stream.read_varint32();
+            for i in 0..prop_len {
+                let name = read_varint_string( &mut decompressed_stream );
+                let prop_type = NetworkPropertyType::from_u8( stream.read_byte() ).unwrap();
 
-            let class_network_id = decompressed_stream.read_le();
-            let mut properties = Vec::new();
+                let prop_enum_id: Option<u16> = if prop_type == NetworkPropertyType::Enum {
+                    Some( decompressed_stream.read_be() )
+                } else {
+                    None
+                };
+               
+                class_props.push( NetworkProperty { name, prop_type, prop_enum_id, network_id: prop_index } );
+                prop_index += 1;
+            }
 
             classes.push(
                 NetworkClass {
                     name: class_name,
-                    network_id: class_network_id,
-                    properties
+                    network_id: i as u16,
+                    properties: class_props
                 }
             );
             

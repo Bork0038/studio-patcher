@@ -9,7 +9,7 @@ pub fn deserialize( mut stream: NetworkStream ) -> Option<Packet> {
     let third_party_purchase_allowed = stream.read_bool();
     let third_party_teleport_allowed = stream.read_bool();
     
-    let peer_id: u32 = stream.read_le();
+    let peer_id = stream.read_varint32();
 
     Some(
         Packet::ID_SET_GLOBALS { 

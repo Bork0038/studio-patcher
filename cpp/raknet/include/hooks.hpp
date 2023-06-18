@@ -40,6 +40,8 @@ namespace hooks {
         }
     }
 
+
+
     typedef __int64(__fastcall* client_on_receive_t)(__int64 self, Packet* packet);
     kthook::kthook_signal<client_on_receive_t> client_on_receive_hook {};
 
@@ -65,6 +67,15 @@ namespace hooks {
         client_on_receive_hook.before.connect( callback );
         // client_on_receive_hook.set_cb( callback );
         client_on_receive_hook.install();
+    }
+
+
+
+    typedef void(__fastcall* rakpeer_send_t)(__int64, __int64, PacketPriority, PacketReliability, char, SystemAddress*, bool, __int64, bool);
+    kthook::kthook_signal<rakpeer_send_t> rakpeer_send_hook {};
+
+    void init_rakpeer_send_hook() {
+        
     }
 
     void init() {
