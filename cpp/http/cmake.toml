@@ -1,4 +1,4 @@
-[target.http_dll]
+[target.http]
 type = "shared"
 sources = ["src/**.cpp", "include/**.hpp"]
 include-directories = ["include", "kthook/include" ]

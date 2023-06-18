@@ -1,0 +1,5 @@
+[target.loader]
+type = "shared"
+sources = ["src/**.cpp", "include/**.hpp"]
+include-directories = ["include" ]
+compile-features = ["cxx_std_20"]

@@ -59,7 +59,8 @@ pub fn install_patches_internal( patches: PatchRequest ) -> PatchResult {
 
     match patches::install_patches( 
         binary.clone(),  
-        patches.patches 
+        patches.patches,
+        patches.path.clone()
     ) {
         Ok(_) => {},
         Err(e) => return PatchResult::error( e.to_string() )

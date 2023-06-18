@@ -35,6 +35,9 @@
     
         "icons/icon.ico"
       ],
+      "resources": [
+        "./dlls/*"
+      ],
       "identifier": "com.studiopatcher.dev",
       "targets": "all"
     },

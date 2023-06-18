@@ -46,7 +46,7 @@ impl ThemesPatch {
         insts
     }
 
-    pub fn patch( binary: Rc<RefCell<Binary>> ) -> Result<(), Box<dyn Error>> {
+    pub fn patch( binary: Rc<RefCell<Binary>>, file_path: String ) -> Result<(), Box<dyn Error>> {
         let mut themes = vec![
             String::from( ":/Platform/Base/QtUI/themes/DarkTheme.json" ),
             String::from( ":/Platform/Base/QtUI/themes/LightTheme.json" )

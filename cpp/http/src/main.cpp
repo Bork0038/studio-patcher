@@ -29,7 +29,7 @@ void __declspec(dllexport) entry( HMODULE hmod ) {
 
 int __stdcall DllMain( HMODULE hmod, uint32_t reason, void*) {
     if ( reason == DLL_PROCESS_ATTACH ) {
-        alloc_console();
+        // alloc_console();
         entry( hmod );
     }
 

@@ -16,8 +16,8 @@ endif()
 add_subdirectory(kthook)
 set(CMAKE_FOLDER ${CMKR_CMAKE_FOLDER})
 
-# Target: http_dll
-set(http_dll_SOURCES
+# Target: http
+set(http_SOURCES
 	"src/main.cpp"
 	"include/hooks.hpp"
 	"include/patterns.hpp"
@@ -27,21 +27,21 @@ set(http_dll_SOURCES
 	cmake.toml
 )
 
-add_library(http_dll SHARED)
+add_library(http SHARED)
 
-target_sources(http_dll PRIVATE ${http_dll_SOURCES})
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${http_dll_SOURCES})
+target_sources(http PRIVATE ${http_SOURCES})
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${http_SOURCES})
 
-target_compile_features(http_dll PUBLIC
+target_compile_features(http PUBLIC
 	cxx_std_20
 )
 
-target_include_directories(http_dll PUBLIC
+target_include_directories(http PUBLIC
 	include
 	"kthook/include"
 )
 
-target_link_libraries(http_dll PUBLIC
+target_link_libraries(http PUBLIC
 	kthook
 )
 

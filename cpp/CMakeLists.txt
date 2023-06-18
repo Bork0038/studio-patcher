@@ -36,3 +36,13 @@ endif()
 add_subdirectory(http)
 set(CMAKE_FOLDER ${CMKR_CMAKE_FOLDER})
 
+# Subdirectory: loader
+set(CMKR_CMAKE_FOLDER ${CMAKE_FOLDER})
+if(CMAKE_FOLDER)
+	set(CMAKE_FOLDER "${CMAKE_FOLDER}/loader")
+else()
+	set(CMAKE_FOLDER loader)
+endif()
+add_subdirectory(loader)
+set(CMAKE_FOLDER ${CMKR_CMAKE_FOLDER})
+

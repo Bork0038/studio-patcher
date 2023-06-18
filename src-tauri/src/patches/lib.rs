@@ -5,7 +5,7 @@ use std::error::Error;
 
 pub struct Patch {
     pub name: String,
-    pub patch: fn( data: Rc<RefCell<Binary>> ) -> Result<(), Box<dyn Error>>
+    pub patch: fn( data: Rc<RefCell<Binary>>, file_path: String ) -> Result<(), Box<dyn Error>>
 }
 
 pub enum PatchType {

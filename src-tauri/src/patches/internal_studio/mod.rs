@@ -34,7 +34,7 @@ impl InternalStudioPatch {
         }
     }
 
-    pub fn patch( binary: Rc<RefCell<Binary>> ) -> Result<(), Box<dyn Error>> {
+    pub fn patch( binary: Rc<RefCell<Binary>>, file_path: String ) -> Result<(), Box<dyn Error>> {
         for patch in PATCHES.iter() {
             patch.patch( binary.clone() )?;
         }

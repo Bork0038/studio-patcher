@@ -79,13 +79,6 @@ impl Binary {
         Ok(())
     }
 
-    pub fn add_import( &mut self ) -> Result<(), Box<dyn Error>> {
-        let data = self.serialize()?;
-
-        
-        Ok(())
-    }
-
     pub fn get_section_by_name<S: Into<String>>( &mut self, name: S ) -> Option<Section> {
         let name = name.into();
        
