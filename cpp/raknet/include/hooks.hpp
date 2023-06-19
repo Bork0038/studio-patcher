@@ -75,11 +75,52 @@ namespace hooks {
     kthook::kthook_signal<rakpeer_send_t> rakpeer_send_hook {};
 
     void init_rakpeer_send_hook() {
+        const auto addr = aob_scan(patterns::rakpeer_send);
+        if (!addr) {
+            throw std::runtime_error("failed to find RBX::Network::ConcurrentRakPeer::Send");
+        }
+
+        auto callback = [](
+            const auto& hook,
+            __int64 &self, 
+            __int64 &bitstream, 
+            PacketPriority &priority, 
+            PacketReliability &reliability, 
+            char &ordering_channel, 
+            SystemAddress *&system_address, 
+            bool &broadcast,
+            __int64 &meter, 
+            bool &force_direct_send
+        ) {
+           uintptr_t bitstream_ptr = *reinterpret_cast<uintptr_t *>( bitstream );
         
+            int size = *reinterpret_cast<int *>( bitstream_ptr + 0x30 );
+            unsigned char* data = reinterpret_cast<unsigned char*>( 
+                *reinterpret_cast<uintptr_t *>( bitstream_ptr + 0x10 )
+            );
+
+            send_packet(
+                Opcodes::OutgoingPackets,
+                PacketType::StudioClient,
+                *system_address,
+                data,
+                size
+            );
+
+            return false;
+        };
+
+        
+        rakpeer_send_hook.set_dest( *addr );
+        rakpeer_send_hook.before.connect( callback );
+        // client_on_receive_hook.set_cb( callback );
+        rakpeer_send_hook.install();
     }
+
 
     void init() {
         init_on_receive_hook();
+        init_rakpeer_send_hook();
     }
 
 }

@@ -5,7 +5,7 @@ use std::{net::{SocketAddrV4, Ipv4Addr}, str::FromStr};
 use crate::stream::{ NetworkStream, Serializable };
 use super::SystemIndex;
 
-#[derive(Deserialize, Serialize, Clone)]
+#[derive(Deserialize, Serialize, Clone, Debug)]
 pub struct SystemAddress {
     pub address: SockAddrIn,
     pub debug_port: u16,

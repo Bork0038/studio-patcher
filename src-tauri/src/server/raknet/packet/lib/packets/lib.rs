@@ -1,5 +1,8 @@
 use serde::{ Deserialize, Serialize };
 use num_derive::{ FromPrimitive, ToPrimitive };
+use crate::stream::Serializable;
+
+use super::super::NetworkStream;
 
 pub use num_traits::{ FromPrimitive, ToPrimitive };
 
@@ -105,3 +108,36 @@ pub struct NetworkClass {
     pub properties: Vec<NetworkProperty>
 }
 
+#[derive(Deserialize, Serialize, Debug, Clone)]
+pub struct ShortAddress {
+    pub version: u8,
+    pub address: [u8; 4],
+    pub port: u16
+}
+
+impl Serializable<ShortAddress> for ShortAddress {
+
+    fn read( stream: &mut NetworkStream ) -> ShortAddress {
+        let version = stream.read_byte();
+        let bytes = stream.read_bytes( 4 )
+            .iter()
+            .map( |d| d ^ 0xFF )
+            .collect::<Vec<u8>>();
+
+        let port = stream.read_le();
+        let address: [u8; 4] = bytes.as_slice().try_into().unwrap();
+
+        ShortAddress { 
+            version, 
+            address,
+            port 
+        }
+    }
+
+    fn write( &mut self, stream: &mut NetworkStream ) {
+        stream.write_byte( self.version );
+        stream.write_bytes( self.address.to_vec() );
+        stream.write_le( self.port );
+    }
+
+}

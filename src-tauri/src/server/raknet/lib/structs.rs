@@ -32,7 +32,7 @@ impl SockAddrIn6 {
     }
 }
 
-#[derive(Clone, Copy, Deserialize, Serialize)]
+#[derive(Clone, Copy, Deserialize, Serialize, Debug)]
 pub struct InAddr {
     pub s_addr: u32
 }
@@ -53,7 +53,7 @@ impl InAddr {
 
 }
 
-#[derive(Clone, Copy, Deserialize, Serialize)]
+#[derive(Clone, Copy, Deserialize, Serialize, Debug)]
 pub struct SockAddrIn {
     pub sin_family: u8,
     pub sin_port: u16,

@@ -1,15 +1,25 @@
 mod lib;
 
-use std::fmt;
-use super::NetworkStream;
+use std::{fmt, collections::HashMap};
+use super::{ NetworkStream, SystemAddress, SystemIndex };
 use serde::{ Deserialize, Serialize };
+use lib::packets::lib::ShortAddress;
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub enum Packet {
     ID_FCAR_REQUIRES_PUBLIC_KEY { id: u16 },
     ID_FCAR_REQUIRES_SECURITY { id: u16 },
     ID_FCAR_PUBLIC_KEY_MISMATCH { id: u16 },
-    ID_CONNECTION_REQUEST_ACCEPTED { id: u16 },
+
+    ID_CONNECTION_REQUEST_ACCEPTED { 
+        id: u16,
+        len: usize,
+        address: ShortAddress,
+        system_index: SystemIndex,
+        address_list: Vec<ShortAddress>,
+        send_ping_time: u64,
+        send_pong_time: u64
+    },
 
     ID_FCAR_CONNECTION_ATTEMPT_FAILED { id: u16 },
     ID_FCAR_ALREADY_CONNECTED { id: u16 },
@@ -28,7 +38,7 @@ pub enum Packet {
         flag: u8
     },
 
-    ID_SET_GLOBALS { // not done -- pushIncomingPackets 
+    ID_SET_GLOBALS {
         id: u16,
         len: usize,
         streaming_enabled: bool,
@@ -65,7 +75,7 @@ pub enum Packet {
     ID_SFFLAG_SYNC {
         id: u16,
         len: usize,
-        fflags: Vec<(String, String)>
+        fflags: HashMap<String, String>
     },
 
     ID_NEW_SCHEMA {

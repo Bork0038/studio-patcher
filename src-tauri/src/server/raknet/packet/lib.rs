@@ -13,6 +13,7 @@ impl Packet {
 
         let stream = NetworkStream::from( packet_data.to_owned() );
         match packet_id {
+            0x10 => packets::packet_10::deserialize( stream ),
             0x81 => packets::packet_81::deserialize( stream ),
             0x84 => packets::packet_84::deserialize( stream ),
             0x93 => packets::packet_93::deserialize( stream ),

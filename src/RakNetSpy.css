@@ -551,3 +551,7 @@ body, html, #root, #wrapper {
 .raknet-inspector-pair-value {
 	width: 40%;
 }
+
+.raknet-inspector-single-value {
+	width: 100%;
+}

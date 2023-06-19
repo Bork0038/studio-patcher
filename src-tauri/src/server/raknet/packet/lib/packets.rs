@@ -1,3 +1,4 @@
+pub mod packet_10;
 pub mod packet_81;
 
 pub mod packet_83_04;

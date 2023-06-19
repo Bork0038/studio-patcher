@@ -5,6 +5,8 @@ import parseHeaders from "parse-headers";
 import NetworkStream from "./classes/stream";
 import { Buffer } from "buffer";
 
+import renderPacket from "./RakNetSpyDisplay";
+
 import "./RakNetSpy.css";
 import "rsuite/styles/index.less";
 
@@ -96,75 +98,75 @@ function RakNetSpy(props) {
     const onRowClick = row => {
         if (paused) return;
 
-        let { packet } = row;
+        // let validKeys = Object
+        //     .keys( packet )
+        //     .filter( 
+        //         key => 
+        //             key != "id" && 
+        //             key != "len" &&
+        //             packet[ key ] != null
+        //     )
 
-        let validKeys = Object
-            .keys( packet )
-            .filter( 
-                key => 
-                    key != "id" && 
-                    key != "len" &&
-                    packet[ key ] != null
-            )
+        // const newActivePacket = [
+        //     <div class="raknet-inspector-pair">
+        //         <p class="raknet-inspector-pair-key">ID</p>
+        //         <p class="raknet-inspector-pair-value">{ row.id }</p>
+        //     </div>,
+        //      <div class="raknet-inspector-pair">
+        //         <p class="raknet-inspector-pair-key">Name</p>
+        //         <p class="raknet-inspector-pair-value">{ row.name }</p>
+        //     </div>,
+        //     <div class="raknet-inspector-pair">
+        //         <p class="raknet-inspector-pair-key">Source</p>
+        //         <p class="raknet-inspector-pair-value">{ row.client }</p>
+        //     </div>,
+        //     <div class="raknet-inspector-pair">
+        //         <p class="raknet-inspector-pair-key">Type</p>
+        //         <p class="raknet-inspector-pair-value">{ row.packetType }</p>
+        //     </div>,
 
-        const newActivePacket = [
-            <div class="raknet-inspector-pair">
-                <p class="raknet-inspector-pair-key">ID</p>
-                <p class="raknet-inspector-pair-value">{ row.id }</p>
-            </div>,
-             <div class="raknet-inspector-pair">
-                <p class="raknet-inspector-pair-key">Name</p>
-                <p class="raknet-inspector-pair-value">{ row.name }</p>
-            </div>,
-            <div class="raknet-inspector-pair">
-                <p class="raknet-inspector-pair-key">Source</p>
-                <p class="raknet-inspector-pair-value">{ row.client }</p>
-            </div>,
-            <div class="raknet-inspector-pair">
-                <p class="raknet-inspector-pair-key">Type</p>
-                <p class="raknet-inspector-pair-value">{ row.packetType }</p>
-            </div>,
-
-            <p class="raknet-inspector-title">Packet Data</p>
-        ];
-        for (let key of validKeys) {
-            let value = packet[key];
+        //     <p class="raknet-inspector-title">Packet Data</p>
+        // ];
+        // for (let key of validKeys) {
+        //     let value = packet[key];
             
-            if (typeof value == "object") {
-                newActivePacket.push(
-                    <p class="raknet-inspector-title">{ key }</p>
-                );
+        //     if (typeof value == "object") {
+        //         newActivePacket.push(
+        //             <p class="raknet-inspector-title">{ key }</p>
+        //         );
 
-                for ( let key of Object.keys( value ) ) {
-                    let value2 = value[ key ];
+        //         for ( let key of Object.keys( value ) ) {
+        //             let value2 = value[ key ];
 
-                    if (typeof value2 == "object" && value2.length == 2) {
-                        newActivePacket.push(
-                            <div class="raknet-inspector-pair">
-                                <p class="raknet-inspector-pair-key">{ value2[ 0 ] }</p>
-                                <p class="raknet-inspector-pair-value">{ value2[ 1 ] }</p>
-                            </div>
-                        );
-                    } else {
-                        newActivePacket.push(
-                            <div class="raknet-inspector-pair">
-                                <p class="raknet-inspector-pair-key">{ key }</p>
-                                <p class="raknet-inspector-pair-value">{ value2.toString() }</p>
-                            </div>
-                        );
-                    }
-                }
-            } else {
-                newActivePacket.push(
-                    <div class="raknet-inspector-pair">
-                        <p class="raknet-inspector-pair-key">{ key }</p>
-                        <p class="raknet-inspector-pair-value">{ value.toString() }</p>
-                    </div>
-                );
-            }
-        }
+        //             if (typeof value2 == "object" && value2.length == 2) {
+        //                 newActivePacket.push(
+        //                     <div class="raknet-inspector-pair">
+        //                         <p class="raknet-inspector-pair-key">{ value2[ 0 ] }</p>
+        //                         <p class="raknet-inspector-pair-value">{ value2[ 1 ] }</p>
+        //                     </div>
+        //                 );
+        //             } else {
+        //                 newActivePacket.push(
+        //                     <div class="raknet-inspector-pair">
+        //                         <p class="raknet-inspector-pair-key">{ key }</p>
+        //                         <p class="raknet-inspector-pair-value">{ value2.toString() }</p>
+        //                     </div>
+        //                 );
+        //             }
+        //         }
+        //     } else {
+        //         newActivePacket.push(
+        //             <div class="raknet-inspector-pair">
+        //                 <p class="raknet-inspector-pair-key">{ key }</p>
+        //                 <p class="raknet-inspector-pair-value">{ value.toString() }</p>
+        //             </div>
+        //         );
+        //     }
+        // }
 
-        setActivePacket( newActivePacket );
+        setActivePacket( 
+            renderPacket( row )
+        );
     }
 
     const clearPackets = () => {
