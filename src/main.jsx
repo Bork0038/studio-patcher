@@ -8,6 +8,7 @@ import {
 import App from "./Home";
 import HttpSpy from "./HttpSpy";
 import RakNetSpy from "./RakNetSpy";
+import SchemaViewer from "./SchemaViewer";
 
 const router = createBrowserRouter([
 	{
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
 	{
 		path: "/raknet",
 		element: <RakNetSpy />
+	},
+	{
+		path: "/schema",
+		element: <SchemaViewer />
 	}
 ])
 

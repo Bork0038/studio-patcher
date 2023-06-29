@@ -531,7 +531,7 @@ body, html, #root, #wrapper {
 	user-select: none;
 	margin: 0;
 }
-
+ 
 .raknet-inspector-pair p {
 	height: 100%;
 	line-height: 40px;
@@ -553,5 +553,15 @@ body, html, #root, #wrapper {
 }
 
 .raknet-inspector-single-value {
+	width: 100%;
+}
+
+.raknet-inspector-open-network-schema {
+	width: 100%;
+	height: 50px;
+	padding: 10px;
+}
+
+.raknet-inspector-open-network-schema button {
 	width: 100%;
 }

@@ -96,74 +96,6 @@ function RakNetSpy(props) {
     }
 
     const onRowClick = row => {
-        if (paused) return;
-
-        // let validKeys = Object
-        //     .keys( packet )
-        //     .filter( 
-        //         key => 
-        //             key != "id" && 
-        //             key != "len" &&
-        //             packet[ key ] != null
-        //     )
-
-        // const newActivePacket = [
-        //     <div class="raknet-inspector-pair">
-        //         <p class="raknet-inspector-pair-key">ID</p>
-        //         <p class="raknet-inspector-pair-value">{ row.id }</p>
-        //     </div>,
-        //      <div class="raknet-inspector-pair">
-        //         <p class="raknet-inspector-pair-key">Name</p>
-        //         <p class="raknet-inspector-pair-value">{ row.name }</p>
-        //     </div>,
-        //     <div class="raknet-inspector-pair">
-        //         <p class="raknet-inspector-pair-key">Source</p>
-        //         <p class="raknet-inspector-pair-value">{ row.client }</p>
-        //     </div>,
-        //     <div class="raknet-inspector-pair">
-        //         <p class="raknet-inspector-pair-key">Type</p>
-        //         <p class="raknet-inspector-pair-value">{ row.packetType }</p>
-        //     </div>,
-
-        //     <p class="raknet-inspector-title">Packet Data</p>
-        // ];
-        // for (let key of validKeys) {
-        //     let value = packet[key];
-            
-        //     if (typeof value == "object") {
-        //         newActivePacket.push(
-        //             <p class="raknet-inspector-title">{ key }</p>
-        //         );
-
-        //         for ( let key of Object.keys( value ) ) {
-        //             let value2 = value[ key ];
-
-        //             if (typeof value2 == "object" && value2.length == 2) {
-        //                 newActivePacket.push(
-        //                     <div class="raknet-inspector-pair">
-        //                         <p class="raknet-inspector-pair-key">{ value2[ 0 ] }</p>
-        //                         <p class="raknet-inspector-pair-value">{ value2[ 1 ] }</p>
-        //                     </div>
-        //                 );
-        //             } else {
-        //                 newActivePacket.push(
-        //                     <div class="raknet-inspector-pair">
-        //                         <p class="raknet-inspector-pair-key">{ key }</p>
-        //                         <p class="raknet-inspector-pair-value">{ value2.toString() }</p>
-        //                     </div>
-        //                 );
-        //             }
-        //         }
-        //     } else {
-        //         newActivePacket.push(
-        //             <div class="raknet-inspector-pair">
-        //                 <p class="raknet-inspector-pair-key">{ key }</p>
-        //                 <p class="raknet-inspector-pair-value">{ value.toString() }</p>
-        //             </div>
-        //         );
-        //     }
-        // }
-
         setActivePacket( 
             renderPacket( row )
         );
@@ -191,37 +123,40 @@ function RakNetSpy(props) {
 
             const { address, opcode, packet, packet_type } = req.payload;
 
-            const packetName =  Object.keys( packet )[ 0 ];
-            const packetData = packet[ packetName ]; 
+            try {
+                const packetName =  Object.keys( packet )[ 0 ];
+                const packetData = packet[ packetName ]; 
+    
+                const clientHash = JSON.stringify( address ) + packet_type; // hash later
+                if ( !clientHashTable.includes( clientHash )) {
+                    addClient( address, packet_type, clientHash );
+    
+                    const hashTable = clientHashTable;
+                    hashTable.push( clientHash );
+                    setClientHashTable( hashTable );
+                }
+    
+                let id_bytes = bytesFromInt( packetData.id );
+                let id_string = id_bytes[ 0 ] == 0x83 
+                    ? `${id_bytes[ 0 ].toString( 16 )} ${id_bytes[ 1 ].toString( 16 )}`
+                    : id_bytes[ 1 ].toString( 16 );
 
-
-            const clientHash = JSON.stringify( address ) + packet_type; // hash later
-            if ( !clientHashTable.includes( clientHash )) {
-                addClient( address, packet_type, clientHash );
-
-                const hashTable = clientHashTable;
-                hashTable.push( clientHash );
-                setClientHashTable( hashTable );
+                setPackets( oldPackets => [ 
+                    ...oldPackets, 
+                    {
+                        id: id_string,
+                        name: packetName,
+                        client: getIpFromAddress( address ),
+                        len: packetData.len,
+                        opcode,
+                        packet: packetData,
+                        packetType: packet_type,
+                        clientHash
+                    }
+                ]);
+            } catch(e) {
+                console.log(`Failed to load packet ${ packet_type } ${ e.toString() }`);
             }
-
-            let id_bytes = bytesFromInt( packetData.id );
-            let id_string = id_bytes[ 0 ] == 0x83 
-                ? `${id_bytes[ 0 ].toString( 16 )} ${id_bytes[ 1 ].toString( 16 )}`
-                : id_bytes[ 1 ].toString( 16 );
-
-            const packetList = [ ...packets ];
-            packetList.push({
-                id: id_string,
-                name: packetName,
-                client: getIpFromAddress( address ),
-                len: packetData.len,
-                opcode,
-                packet: packetData,
-                packetType: packet_type,
-                clientHash
-            })
-            
-            setPackets( packetList );
         });
 
         return () => {

@@ -1,4 +1,4 @@
-mod lib;
+pub mod lib;
 
 use std::{fmt, collections::HashMap};
 use super::{ NetworkStream, SystemAddress, SystemIndex };
@@ -136,6 +136,12 @@ pub enum Packet {
     ID_UNKNOWN {
         id: u16,
         len: usize
+    },
+
+    ID_SCHEMA_SYNC_V2 {
+        id: u16,
+        len: usize,
+        schema: lib::packets::packet_97::NetworkSchema
     }
 }
 

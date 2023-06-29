@@ -1,5 +1,5 @@
-mod http;
-mod raknet;
+pub mod http;
+pub mod raknet;
 
 use tauri::App;
 use tokio::task::spawn;

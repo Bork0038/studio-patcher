@@ -13,7 +13,8 @@ async fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
             commands::install_patches,
-            commands::restore_binary
+            commands::restore_binary,
+            commands::register_schema
         ])
         .setup(|app| {
             server::init_servers( app );

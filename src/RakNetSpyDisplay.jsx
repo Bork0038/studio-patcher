@@ -1,3 +1,8 @@
+import { Button } from "rsuite";
+import { WebviewWindow } from "@tauri-apps/api/window";
+import { event, invoke } from "@tauri-apps/api";
+import sha256 from "crypto-js/sha256";
+
 const isNumber = number => !isNaN(parseInt(number))
 
 const customRenderers = {
@@ -15,7 +20,43 @@ const customRenderers = {
     }
 }
 
+function OpenSchema( data ) {
+    const openSchemaViewer = async () => {
+        const schemaId = sha256( JSON.stringify(data.schema) ).toString();
+ 
+        const window = new WebviewWindow( `/schema${ schemaId }`, {
+            url: `/schema?d=${ schemaId }`,
+            decorations: false
+        });
+
+        window.show();
+        window.once("tauri://created", async () => {
+            await invoke( 
+                "register_schema", 
+                {
+                    schema: {
+                        data: data.schema,
+                        id: schemaId
+                    }
+                }
+            )
+        })
+    };
+
+    return <div class="raknet-inspector-open-network-schema">
+        <Button onClick={openSchemaViewer}>View Network Schema</Button>
+    </div>
+}
+
 function renderData( dest, packet ) {
+    if (packet.id == 0x97) {
+        dest.push( 
+            OpenSchema( packet ) 
+        );
+
+        return dest;
+    }
+
     const validKeys = Object
         .keys( packet )
         .filter( 
@@ -35,6 +76,7 @@ function renderData( dest, packet ) {
             simpleValues.push( key );
         }
     }
+
     
     for (let key of simpleValues) {
         let value = packet[ key ];
@@ -54,7 +96,7 @@ function renderData( dest, packet ) {
             )
         }
     }
-
+    
     for (let key of complexValues) {
         const value = packet[ key ];
 

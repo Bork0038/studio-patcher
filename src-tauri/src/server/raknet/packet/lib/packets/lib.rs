@@ -6,94 +6,88 @@ use super::super::NetworkStream;
 
 pub use num_traits::{ FromPrimitive, ToPrimitive };
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct NetworkEnum {
     pub name: String,
     pub size: u8,
     pub network_id: u16
 }
 
-#[derive(Deserialize, Serialize, Debug, FromPrimitive, ToPrimitive, Eq, PartialEq)]
-#[repr(u8)]
-pub enum NetworkPropertyType {
-    Void = 0,
-    Bool = 1,
-    Int = 2,
-    Int64 = 3,
-    Float = 4,
-    Double = 5,
-    String = 6,
-    ProtectedString = 7,
-    Instance = 8,
-    Instances = 9,
-    Ray = 0x0A,
-    Vector2 = 0x0B,
-    Vector3 = 0x0C,
-    Vector2Int16 = 0x0D,
-    Vector3Int16 = 0x0E,
-    Rect2d = 0x0F,
-    CoordinateFrame = 0x10,
-    Color3 = 0x11,
-    Color3uint8 = 0x12,
-    UDim = 0x13,
-    UDim2 = 0x14,
-    Faces = 0x15,
-    Axes = 0x16,
-    Region3 = 0x17,
-    Region3Int16 = 0x18,
-    CellId = 0x19,
-    GuidData = 0x1A,
-    PhysicalProperties = 0x1B,
-    BrickColor = 0x1C,
-    SystemAddress = 0x1D,
-    BinaryString = 0x1E,
-    Surface = 0x1F,
-    Enum = 0x20,
-    Property = 0x21,
-    Tuple = 0x22,
-    ValueArray = 0x23,
-    ValueTable = 0x24,
-    ValueMap = 0x25,
-    Variant = 0x26,
-    GenericFunction = 0x27,
-    WeakFunctionRef = 0x28,
-    ColorSequence = 0x29,
-    ColorSequenceKeypoint = 0x2A,
-    NumberRange = 0x2B,
-    NumberSequence = 0x2C,
-    NumberSequenceKeypoint = 0x2D,
-    InputObject = 0x2E,
-    Connection = 0x2F,
-    ContentId = 0x30,
-    DescribedBase = 0x31,
-    RefType = 0x32,
-    QFont = 0x33,
-    QDir = 0x34,
-    EventInstance = 0x35,
-    TweenInfo = 0x36,
-    DockWidgetPluginGuiInfo = 0x37,
-    PluginDrag = 0x38,
-    Random = 0x39,
-    PathWaypoint = 0x3A,
-    FloatCurveKey = 0x3B,
-    RotationCurveKey = 0x3C,
-    SharedString = 0x3D,
-    DateTime = 0x3E,
-    RaycastParams = 0x3F,
-    RaycastResult = 0x40,
-    OverlapParams = 0x41,
-    LazyTable = 0x42,
-    DebugTable = 0x43,
-    CatalogSearchParams = 0x44,
-    OptionalCoordinateFrame = 0x45,
-    CSGPropertyData = 0x46,
-    UniqueId = 0x47,
-    Font = 0x48,
-    Blackboard = 0x49,
-    Max = 0x4A
+#[derive(Deserialize, Serialize, Debug, Clone)]
+pub struct NetworkArgument {
+    pub argument_type: NetworkPropertyType,
+    pub argument_enum_id: u16
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
+pub struct NetworkEvent {
+    pub name: String,   
+    pub network_id: u16,
+    pub arguments: Vec<NetworkArgument>
+}
+
+#[derive(Deserialize, Serialize, Debug, FromPrimitive, ToPrimitive, Eq, PartialEq, Clone)]
+#[repr(u8)]
+pub enum NetworkPropertyType {
+    Unsupported = 0,
+    Legacy_Deprecated1 = 1,
+    String_NeverDictionary = 2,
+    ProtectedStringServerIndexString = 3,
+    ProtectedStringLegacyBytecode_Deprecated = 4,
+    ProtectedStringCurrentBytecode_Deprecated = 5,
+    ProtectedStringSource = 6,
+    Enum_VarInt = 7,
+    BinaryString = 8,
+    Bool = 9,
+    Int = 0x0A,
+    Float = 0x0B,
+    Double = 0x0C,
+    UDim = 0x0D,
+    UDim2 = 0x0E,
+    Ray = 0x0F,
+    Faces = 0x10,
+    Axes = 0x11,
+    BrickColor = 0x12,
+    Color3 = 0x13,
+    Color3uint8 = 0x14,
+    Vector2 = 0x15,
+    Vector3_Fixed12Bytes = 0x16,
+    Vector3_PartSizeEncoding_Deprecated = 0x17,
+    Vector2int16 = 0x18,
+    Vector3int16 = 0x19,
+    CoordinateFrame_ExactEncoding = 0x1A,
+    CoordinateFrame_GeneralEncoding = 0x1B,
+    InstanceGuid = 0x1C,
+    Tuple = 0x1D,
+    ValueArray = 0x1E,
+    ValueTable = 0x1F,
+    ValueMap = 0x20,
+    ContentId = 0x21,
+    SystemAddress = 0x22,
+    NumberSequence = 0x23,
+    NumberSequenceKeypoint = 0x24,
+    NumberRange = 0x25,
+    ColorSequence = 0x26,
+    ColorSequenceKeypoint = 0x27,
+    Rect2d = 0x28,
+    PhysicalProperties = 0x29,
+    Region3 = 0x2A,
+    Region3int16 = 0x2B,
+    Int64 = 0x2C,
+    PathWaypoint_Deprecated = 0x2D,
+    SharedString = 0x2E,
+    ProtectedStringBytecode = 0x2F,
+    DateTime = 0x30,
+    String_FixedDictionary = 0x31,
+    OptionalCoordinateFrame_ExactEncoding = 0x32,
+    OptionalCoordinateFrame_GeneralEncoding = 0x33,
+    UniqueId = 0x34,
+    PathWaypointWithLabel = 0x35,
+    Font = 0x36,
+    COUNT = 0x37,
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct NetworkProperty {
     pub name: String,
     pub network_id: u16,
@@ -101,11 +95,12 @@ pub struct NetworkProperty {
     pub prop_enum_id: Option<u16>
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct NetworkClass {
     pub name: String,
     pub network_id: u16,
-    pub properties: Vec<NetworkProperty>
+    pub properties: Vec<NetworkProperty>,
+    pub events: Vec<NetworkEvent>
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -140,4 +135,12 @@ impl Serializable<ShortAddress> for ShortAddress {
         stream.write_le( self.port );
     }
 
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone)]
+pub struct NetworkSchema {
+    pub enums: Vec<NetworkEnum>,
+    pub classes: Vec<NetworkClass>,
+    pub content_prefixes: Vec<String>,
+    pub optimized_strings: Vec<String>
 }

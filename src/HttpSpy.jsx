@@ -104,7 +104,7 @@ function HttpSpy(props) {
 
             let req_data = [...data];
             req_data.push(packet);
-            console.log(packet);
+
             setData(req_data);
         });
 

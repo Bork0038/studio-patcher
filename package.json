@@ -15,6 +15,7 @@
     "@rsuite/icons": "^1.0.2",
     "@tauri-apps/api": "^1.2.0",
     "buffer": "^6.0.3",
+    "crypto-js": "^4.1.1",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.1",
     "parse-headers": "^2.0.5",

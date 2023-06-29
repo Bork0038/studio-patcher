@@ -1,5 +1,5 @@
-mod lib;
-mod packet;
+pub mod lib;
+pub mod packet;
 
 pub use lib::*;
 pub use packet::Packet;
