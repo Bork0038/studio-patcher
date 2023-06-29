@@ -103,3 +103,36 @@
     height: calc(50% - 80px);
     background-color: #1A1B1E;
 }
+
+.schema-class-events {
+    display: flex;
+}
+
+.schema-class-events-sidebar {
+    width: 300px;
+    height: 100%;
+    border-right: 1px solid #292d33;
+}
+
+.schema-class-events-sidebar .raknet-inspector-title {
+    background-color: #1A1B1E;
+}
+
+.schema-class-events-sidebar-inner{
+    height: calc(100% - 40px);
+    width: 100%;
+}
+
+.schema-class-events-sidebar-inner .rs-tree {
+    height: 100% !important;
+    overflow-x: hidden;
+}
+
+.schema-class-events-main {
+    width: calc(100% - 300px);
+    height: 100%;
+}
+
+.schema-class-events-main .raknet-inspector-title {
+    background-color: #1A1B1E;
+}

@@ -17,6 +17,7 @@ import icon from "./assets/icon.png";
 function App() {
     const [ schema, setSchema ] = useState([]);
     const [ currentClass, setCurrentClass ] = useState(null);
+    const [ currentEvents, setCurrentEvents ] = useState([]);
 
     const close = async () => {
 		await tauriWindow
@@ -73,8 +74,15 @@ function App() {
     const onSelect = element => {
         const data = element.value;
 
-        console.log(data);
         if (data.type == "class") {
+            const events = data.events.map(d => {
+                return {
+                    label: d.name,
+                    value: d
+                }
+            })
+
+            setCurrentEvents( events );
             setCurrentClass( data );
         }
     }
@@ -85,6 +93,11 @@ function App() {
 
 		setSearchTerm( value.length == 0 ? null : value );
 	}
+
+    const [ currentEvent, setCurrentEvent ] = useState(null);
+    const onSelectEvent = event => {
+        setCurrentEvent( event.value );
+    }
 
     return (
         <CustomProvider id="wrapper" theme="dark">
@@ -124,7 +137,6 @@ function App() {
                             );
                         }}
                         searchKeyword={searchTerm}
-                        searchable
                         onSelect={onSelect}
                     />
                 </div>
@@ -139,7 +151,7 @@ function App() {
                         </div>
                         <p class="raknet-inspector-title">Properties</p>
                         <div class="schema-class-properties">
-                            <Table data={() => currentClass ? currentClass.properties : ""} fillHeight virtualized>
+                            <Table data={() => currentClass ? currentClass.properties : []} fillHeight virtualized>
                                 <Table.Column flexGrow={0.5} fullText>
                                     <Table.HeaderCell>Name</Table.HeaderCell>
                                     <Table.Cell dataKey="name" />
@@ -160,7 +172,28 @@ function App() {
                         </div>
                         <p class="raknet-inspector-title">Events</p>
                         <div class="schema-class-events">
-
+                            <div class="schema-class-events-sidebar">
+                                <p class="raknet-inspector-title">Name</p>
+                                <div class="schema-class-events-sidebar-inner">
+                                    <Tree 
+                                        data={currentEvents}
+                                        onSelect={onSelectEvent}
+                                    />
+                                </div>
+                            </div>
+                            <div class="schema-class-events-main">
+                                <p class="raknet-inspector-title">Arguments</p>
+                                <Table data={() => currentEvent ? currentEvent.arguments : []} fillHeight virtualized>
+                                    <Table.Column flexGrow={0.5} fullText>
+                                        <Table.HeaderCell>Type</Table.HeaderCell>
+                                        <Table.Cell dataKey="argument_type" />
+                                    </Table.Column>
+                                    <Table.Column flexGrow={0.5} fullText>
+                                        <Table.HeaderCell>Enum ID</Table.HeaderCell>
+                                        <Table.Cell dataKey="argument_enum_id" />
+                                    </Table.Column>
+                                </Table>
+                            </div>
                         </div>
                     </div>
                 </div>
