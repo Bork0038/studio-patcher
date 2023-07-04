@@ -1,37 +1,30 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import {
-	createBrowserRouter,
-	RouterProvider
-} from "react-router-dom"
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { CustomProvider } from "rsuite";
 
-import App from "./Home";
-import HttpSpy from "./HttpSpy";
-import RakNetSpy from "./RakNetSpy";
-import SchemaViewer from "./SchemaViewer";
+import Patches from "./pages/patches/patches";
+import Versions from "./pages/versions/versions";
+
+import "./rsuite.less";
+import "./main.css";
 
 const router = createBrowserRouter([
 	{
 		path: "/",
-		element: <App />
+		element: <Patches />
 	},
 	{
-		path: "/http",
-		element: <HttpSpy />
-	},
-	{
-		path: "/raknet",
-		element: <RakNetSpy />
-	},
-	{
-		path: "/schema",
-		element: <SchemaViewer />
+		path: "/versions",
+		element: <Versions />
 	}
 ])
 
 
 ReactDOM.createRoot(document.getElementById("root")).render(
 	<React.StrictMode>
-		<RouterProvider router={ router } />
+		<CustomProvider id="wrapper" theme="dark">
+			<RouterProvider router={ router } />
+		</CustomProvider>
 	</React.StrictMode>
 );

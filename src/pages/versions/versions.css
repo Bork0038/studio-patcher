@@ -1,0 +1,27 @@
+.versions-card {
+    width: 100%;    
+}
+
+.versions-table {
+    margin-top: 20px !important;
+}
+
+.versions-table-button {
+    width: calc(100% - 20px);
+    height: calc(100% - 20px);
+
+    margin: 10px;
+}
+
+.versions-table-delete {
+    background-color: #F44336 !important;
+}
+
+.rs-table-cell {
+    background-color: #262626 !important;
+    border-bottom: 1px solid #313131 !important;
+}
+
+.rs-table-row-header .rs-table-cell {
+    background-color: #3B3D41 !important;
+}
