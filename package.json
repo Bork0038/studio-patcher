@@ -12,7 +12,10 @@
     "dll_build": "cd cpp && cmake --build build"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.13.7",
+    "@mui/material": "^5.13.7",
     "@rsuite/icons": "^1.0.2",
     "@tauri-apps/api": "^1.2.0",
     "buffer": "^6.0.3",
@@ -24,7 +27,7 @@
     "react-dom": "^18.2.0",
     "react-icons": "^4.10.1",
     "react-router-dom": "^6.9.0",
-    "rsuite": "^5.28.2",
+    "rsuite": "^5.36.0",
     "sort-by": "^1.2.0"
   },
   "devDependencies": {
