@@ -39,8 +39,8 @@ pub fn deserialize( mut stream: NetworkStream ) -> Option<Packet> {
     }
 
     let class_len = decompressed_stream.read_varint32();
-    let prop_len = decompressed_stream.read_varint32();
-    let event_len = decompressed_stream.read_varint32();
+    let _prop_len = decompressed_stream.read_varint32();
+    let _event_len = decompressed_stream.read_varint32();
 
     let mut classes = Vec::new();
     let mut optimized_strings = Vec::new();

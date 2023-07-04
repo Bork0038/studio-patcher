@@ -54,8 +54,8 @@
         "title": "studio-patcher",
         "minHeight": 630,
         "minWidth": 530,
-        "width": 800,
-        "height": 630,
+        "width": 1024,
+        "height": 768,
         "decorations": false
       }
     ]
