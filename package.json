@@ -12,6 +12,7 @@
     "dll_build": "cd cpp && cmake --build build"
   },
   "dependencies": {
+    "@mui/icons-material": "^5.13.7",
     "@rsuite/icons": "^1.0.2",
     "@tauri-apps/api": "^1.2.0",
     "buffer": "^6.0.3",

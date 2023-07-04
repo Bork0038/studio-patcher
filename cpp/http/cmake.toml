@@ -1,0 +1,8 @@
+[target.http]
+type = "shared"
+sources = ["src/**.cpp", "include/**.hpp"]
+include-directories = ["include", "kthook/include" ]
+compile-features = ["cxx_std_20"]
+link-libraries = ["kthook"]
+
+[subdir.kthook]
