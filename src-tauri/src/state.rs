@@ -5,15 +5,15 @@ use serde::{ Deserialize, Serialize };
 use std::error::Error;
 use std::path::Path;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct InstalledVersion {
     pub channel: String,
     pub version: String
 }  
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct AppState {
-    installed_versions: Vec<InstalledVersion>
+    pub installed_versions: Vec<InstalledVersion>
 }
 
 const CONFIG_PATH: &str = "./config.json";

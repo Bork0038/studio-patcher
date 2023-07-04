@@ -14,7 +14,7 @@ fn setup_app( app: &mut App ) -> Result<(), Box<dyn Error>> {
 fn main() -> Result<(), Box<dyn Error>>{
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
-
+            commands::request_state
         ])
         .setup( setup_app )
         .manage( state::load()? )
