@@ -25,3 +25,52 @@
 .rs-table-row-header .rs-table-cell {
     background-color: #3B3D41 !important;
 }
+
+.versions-title-wrapper {
+    width: 100%;
+    height: 25px;
+}
+
+.versions-title {
+    width: 50%;
+    float: left;
+}
+
+.versions-title-wrapper button {
+    width: 30px;
+    height: 30px;
+    float: right;
+}
+
+.loader {
+    width: calc( 100% - 250px);
+    height: 100%;
+    position: absolute;
+    background-color: rgba(0,0,0,0.7);
+	z-index: 10;
+}
+
+.loader-inner {
+    background-color: #262626;
+
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+
+	width: 300px;
+	height: auto;
+}
+
+.loader-inner .versions-title-wrapper {
+    margin-bottom: 20px;
+}
+
+#loader-progress {
+    width: 500px;
+}
+
+#loader-progress .versions-title {
+    width: 100%;
+    text-align: center;
+}
